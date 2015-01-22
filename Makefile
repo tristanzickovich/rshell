@@ -1,5 +1,5 @@
-g++ main.cpp
+CFLAGS = -ansi -pedantic -Wall -Werror
 
-all:
+all: g++ main.cpp
 
 rshell:
