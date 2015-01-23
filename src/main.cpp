@@ -43,7 +43,7 @@ vector<char*> convertvec(vector<string> conv){
 	return charvec;
 }
 
-void execute(string commands){
+void execute(string commands, bool &conditional){
 	vector<string> getready;
 	commands = cleanup(commands);	
 	if(commands.size() > 0){
@@ -65,20 +65,25 @@ void execute(string commands){
 /*	for(int i = 0; argchar[i] != '\0'; ++i){
 		cout << "char array: " << argchar[i] << endl;
 	} */
-	
+	conditional = false;	
 	int pid = fork();
 	if(pid == -1){
+		conditional = false;
 		perror("Error with fork()");
 		exit(1);
 	}
 	else if(pid == 0){
 		int r = execvp(argchar[0], argchar);
+		conditional = false;
 		perror("Exec failed");
 		exit(1);
 	}
 	else if(pid > 0){
-		if(-1 == wait(0))
+		if(-1 == wait(0)){
+			conditional = false;
 			perror("Error with wait()");
+		}
+		conditional = true;
 	}
 }
 
@@ -141,21 +146,51 @@ void runterminal(){
 			//split command line by spaces and push into cmdline vector
 			boost::split(cmdline, command, boost::is_any_of(" "),	
 				  boost::token_compress_on);
-
+///////****added bool to try to determine if && and ||'s succeed or not.. Did not work.. FIXME 
 			string execme = "";	
 			for(int i = 0; i < cmdline.size(); ++i){
+				bool conditional = true;
+				//if first command is && or ||, do nothing
 				if(execme == "" && (cmdline.at(i) == "&&" || cmdline.at(i) == "||"));
 				else if(cmdline.at(i) == "&&" || cmdline.at(i) == "||" || cmdline.at(i) == ";"){ 
-					execute(execme);
+					if(cmdline.at(i) == "&&"){
+						execute(execme, conditional);
+						//if first command failed with &&, skip the rest for that command
+						if(conditional) cout << "true " << endl;
+						if(!conditional){
+							if(i+1 < cmdline.size()){
+								while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
+									++i;
+							}
+						}
+						execme = "";
+					}
+					else if(cmdline.at(i) == "||"){
+						execute(execme, conditional);
+						//if first command succeeds with ||, skip the rest for that command
+						if(conditional){
+							if(i+1 < cmdline.size()){
+								while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
+									++i;
+							}
+						}
+						execme = "";
+					}
+					else{
+						//if not && or ||, execute the command normally
+						execute(execme, conditional);
 					//cout << execme <<" test ";
-					execme = "";
+						execme = "";
+					}
 				}
-				else
+				else{
 					execme.append(cmdline.at(i));
 					execme.append(" ");
+				}
 			}
 			if(execme != ""){
-				execute(execme);
+				bool conditional = true;
+				execute(execme, conditional);
 				execme = "";
 			}
 	//		cout << execme << endl;
