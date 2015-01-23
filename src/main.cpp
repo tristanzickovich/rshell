@@ -70,18 +70,33 @@ void execute(string commands){
 	
 	int pid = fork();
 	if(pid == -1){
-		perror("Error with fork().");
+		perror("Error with fork()");
 		exit(1);
 	}
 	else if(pid == 0){
 		int r = execvp(argchar[0], argchar);
-		perror("exec failed");
+		perror("Exec failed");
 		exit(1);
 	}
 	else if(pid > 0){
 		if(-1 == wait(0))
-			perror("Error with wait().");
+			perror("Error with wait()");
 	}
+}
+
+string specialspacing(string fixer){
+	for(int i = 1; i < fixer.size(); ++i){
+		if(fixer.at(i) == ';'){
+			if(i+1 < fixer.size() && fixer.at(i+1) != ' '){
+				fixer.insert(i+1, " ");
+			}
+			if(fixer.at(i-1) != '\\' && fixer.at(i-1) != ' '){
+				fixer.insert(i, " ");
+			}
+		}
+		//else if(fixer.at(i) == '&' && fixer.at(i + 
+	}
+	return fixer;
 }
 
 void runterminal(){
@@ -103,9 +118,10 @@ void runterminal(){
 		}
 
 		command = cleanup(command);	
-
-		//if any commands exist (other than spaces, semi-colons, or comments) process commands
+// call function here to account for attached ;'s or conditional's
+		//if any commands exist (other than spaces or comments) process commands
 		if(command.size() > 0){
+			command = specialspacing(command);
 			command.c_str();
 			//split command line by spaces and push into cmdline vector
 			boost::split(cmdline, command, boost::is_any_of(" "),	
@@ -116,7 +132,7 @@ void runterminal(){
 			for(int i = 0; i < cmdline.size(); ++i){
 				if(cmdline.at(i) == "&&" || cmdline.at(i) == "||" || cmdline.at(i) == ";"){ 
 					execute(execme);
-					//cout << execme <<" fail ";
+					//cout << execme <<" test ";
 					execme = "";
 				}
 				else
