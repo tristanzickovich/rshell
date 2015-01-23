@@ -47,11 +47,9 @@ void execute(string commands){
 	vector<string> getready;
 	commands = cleanup(commands);	
 	if(commands.size() > 0){
-		
 		commands.c_str();
 		boost::split(getready, commands, boost::is_any_of(" "),	
 			  boost::token_compress_on);
-	//	cout << "phrase to exec: " <<  commands << endl;
 		if(getready.at(0) == "exit" || getready.at(0) == "EXIT"){
 			exit(1);
 		}
@@ -145,9 +143,9 @@ void runterminal(){
 				  boost::token_compress_on);
 
 			string execme = "";	
-
 			for(int i = 0; i < cmdline.size(); ++i){
-				if(cmdline.at(i) == "&&" || cmdline.at(i) == "||" || cmdline.at(i) == ";"){ 
+				if(execme == "" && (cmdline.at(i) == "&&" || cmdline.at(i) == "||"));
+				else if(cmdline.at(i) == "&&" || cmdline.at(i) == "||" || cmdline.at(i) == ";"){ 
 					execute(execme);
 					//cout << execme <<" test ";
 					execme = "";
