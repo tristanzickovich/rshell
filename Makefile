@@ -1,5 +1,9 @@
-CFLAGS = -ansi -pedantic -Wall -Werror
+CFLAGS=-ansi -pedantic -Wall -Werror
 
-all: g++ main.cpp
+all:
+	if [ ! -d bin ]; then mkdir bin; fi
+	g++ $(CFLAGS) src/main.cpp -o bin/rshell
 
 rshell:
+	if [ ! -d bin ]; then mkdir bin; fi
+	g++ $(CFLAGS) src/main.cpp -o bin/rshell
