@@ -132,7 +132,7 @@ void runterminal(){
 	while(true){
 		//output prompt and take in command line
 		cout << curuser << '@' << curhost << ' ';
-		cout << '$' << ':';
+		cout << '$' << ' ';
 		string command = "";
 		getline(cin, command);
 
