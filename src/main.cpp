@@ -7,12 +7,14 @@
 #include <cstdio>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <pwd.h>
+#include <sys/types.h>
 
 using namespace std;
 string cleanup(string cmd){
 	if(!cmd.empty()){	
 			//delete preceeding comments or white space
-		while((cmd.at(0) == ';' || cmd.at(0) == ' ')){
+		while((cmd.at(0) == ';' || cmd.at(0) == ' ' || cmd.at(0) == '\t')){
 			cmd.erase(0,1);
 			if(cmd.empty())
 				break;
@@ -22,7 +24,7 @@ string cleanup(string cmd){
 		//check not duplicate, may become empty after previous task
 	if(!cmd.empty()){
 		//delete superceeding comments or white space
-		while((cmd.at(cmd.size() - 1) == ';' || cmd.at(cmd.size() - 1) == ' ')){
+		while((cmd.at(cmd.size() - 1) == ';' || cmd.at(cmd.size() - 1) == ' ' || cmd.at(cmd.size() -1) == '\t')){
 			cmd.resize(cmd.size() - 1);
 			if(cmd.empty())
 				break;
@@ -43,9 +45,10 @@ vector<char*> convertvec(vector<string> conv){
 	return charvec;
 }
 
-void execute(string commands, bool &conditional){
+int execute(string commands){
 	vector<string> getready;
 	commands = cleanup(commands);	
+	int var;
 	if(commands.size() > 0){
 		commands.c_str();
 		boost::split(getready, commands, boost::is_any_of(" "),	
@@ -65,25 +68,25 @@ void execute(string commands, bool &conditional){
 /*	for(int i = 0; argchar[i] != '\0'; ++i){
 		cout << "char array: " << argchar[i] << endl;
 	} */
-	conditional = false;	
 	int pid = fork();
-	if(pid == -1){
-		conditional = false;
-		perror("Error with fork()");
-		exit(1);
-	}
-	else if(pid == 0){
+//	if(pid == -1){
+//		perror("Error with fork()");
+//		exit(1);
+//	}
+	if(pid == 0){
 		int r = execvp(argchar[0], argchar);
-		conditional = false;
 		perror("Exec failed");
 		exit(1);
 	}
-	else if(pid > 0){
+	else if(pid != 0){
 		if(-1 == wait(0)){
-			conditional = false;
+
+		if(wait(&var) != pid)
 			perror("Error with wait()");
+			return -1;
 		}
-		conditional = true;
+
+		return var;
 	}
 }
 
@@ -122,9 +125,17 @@ string specialspacing(string fixer){
 void runterminal(){
 	vector<string> cmdline;
 	string command = "";
+	struct passwd *pass = getpwuid(getuid());
+	char *curuser = pass->pw_name;
+	char charhost[100];
+	gethostname(charhost, sizeof charhost);
+	string curhost = charhost;	
+	if(curhost.find('.') != std::string::npos)
+		curhost.resize(curhost.find('.'));
 	while(true){
 		//output prompt and take in command line
-		cout << '$' << ' ';
+		cout << curuser << '@' << curhost << ' ';
+		cout << '$' << ':';
 		getline(cin, command);
 
 		if(cin.fail()){
@@ -143,21 +154,23 @@ void runterminal(){
 			command = specialspacing(command);
 		//	cout << "command: " << command << endl;
 			command.c_str();
-			//split command line by spaces and push into cmdline vector
-			boost::split(cmdline, command, boost::is_any_of(" "),	
+			//split command line by spaces and tabs and push into cmdline vector
+			boost::split(cmdline, command, boost::is_any_of(" , \t"),	
 				  boost::token_compress_on);
-///////****added bool to try to determine if && and ||'s succeed or not.. Did not work.. FIXME 
+
+			int conditional;
 			string execme = "";	
 			for(int i = 0; i < cmdline.size(); ++i){
-				bool conditional = true;
 				//if first command is && or ||, do nothing
 				if(execme == "" && (cmdline.at(i) == "&&" || cmdline.at(i) == "||"));
+
+				//if && or || is found in between commands, act accordingly
 				else if(cmdline.at(i) == "&&" || cmdline.at(i) == "||" || cmdline.at(i) == ";"){ 
+					//if its &&
 					if(cmdline.at(i) == "&&"){
-						execute(execme, conditional);
+						conditional = execute(execme);
 						//if first command failed with &&, skip the rest for that command
-						if(conditional) cout << "true " << endl;
-						if(!conditional){
+						if(conditional == 0){
 							if(i+1 < cmdline.size()){
 								while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
 									++i;
@@ -165,10 +178,11 @@ void runterminal(){
 						}
 						execme = "";
 					}
+					//if its ||
 					else if(cmdline.at(i) == "||"){
-						execute(execme, conditional);
+						conditional = execute(execme);
 						//if first command succeeds with ||, skip the rest for that command
-						if(conditional){
+						if(conditional != 0){
 							if(i+1 < cmdline.size()){
 								while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
 									++i;
@@ -176,25 +190,24 @@ void runterminal(){
 						}
 						execme = "";
 					}
+					//if its a ;, just execute normally
 					else{
-						//if not && or ||, execute the command normally
-						execute(execme, conditional);
-					//cout << execme <<" test ";
+						execute(execme);
 						execme = "";
 					}
 				}
+				//if a normal command, add to execme for later processing
 				else{
 					execme.append(cmdline.at(i));
 					execme.append(" ");
 				}
 			}
+			//if there are unexecuted commands after loop ends, execute them
 			if(execme != ""){
 				bool conditional = true;
-				execute(execme, conditional);
+				execute(execme);
 				execme = "";
 			}
-	//		cout << execme << endl;
-		
 		}
 	}	
 }	
