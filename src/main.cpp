@@ -36,7 +36,7 @@ string cleanup(string cmd){
 vector<char*> convertvec(vector<string> conv){
 	vector<char*> charvec;
 
-	for(int i = 0; i < conv.size(); ++i){
+	for(unsigned i = 0; i < conv.size(); ++i){
 		string temp = conv.at(i);
 		char *piece = new char[conv.size() + 1];
 		charvec.push_back(strcpy(piece, temp.c_str()));
@@ -61,8 +61,8 @@ int execute(string commands){
 		} */
 	}
 	vector<char*> charvec = convertvec(getready);	
-	char *argchar[getready.size()+1]; 
-	for(int i = 0; i < charvec.size(); ++i){
+	char *argchar[300]; 
+	for(unsigned i = 0; i < charvec.size(); ++i){
 		argchar[i] = charvec.at(i);
 	}
 	/*for(int i = 0; argchar[i] != '\0'; ++i){
@@ -74,7 +74,7 @@ int execute(string commands){
 	//	exit(1);
 	//}
 	if(pid == 0){
-		int r = execvp(argchar[0], argchar);
+		execvp(argchar[0], argchar);
 		perror("Exec failed");
 		exit(1);
 	}
@@ -88,7 +88,7 @@ int execute(string commands){
 }
 
 string specialspacing(string fixer){
-	for(int i = 1; i < fixer.size(); ++i){
+	for(unsigned i = 1; i < fixer.size(); ++i){
 		if(fixer.at(i) == ';'){
 			if(i+1 < fixer.size() && fixer.at(i+1) != ' '){
 				fixer.insert(i+1, " ");
@@ -156,11 +156,11 @@ void runterminal(){
 			boost::split(cmdline, command, boost::is_any_of(" , \t"),	
 				  boost::token_compress_on);
 
-			int conditional;
+			//int conditional;
 			string execme = "";	
 			//bool passed = true;
 			
-			for(int i = 0; i < cmdline.size(); ++i){
+			for(unsigned i = 0; i < cmdline.size(); ++i){
 				//cout << "execme: " << execme << endl;
 				//if first command is && or ||, do nothing
 				if(execme == "" && (cmdline.at(i) == "&&" || cmdline.at(i) == "||"));
@@ -173,11 +173,11 @@ void runterminal(){
 							conditional = execute(execme);
 							//if first command failed with &&, skip the rest for that command
 							if(conditional != 0){
-							/*	if(i+1 < cmdline.size()){
+								if(i+1 < cmdline.size()){
 									while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
 										++i;
-								}*/
-								/*passed = false;
+								
+								passed = false;
 							}
 							else
 								passed = true;
@@ -202,11 +202,11 @@ void runterminal(){
 					else{
 						//if(passed){
 						conditional = execute(execme);
-						/*if(conditional == 0)
+						if(conditional == 0)
 							passed = true;
 						else
 							passed = false;
-						}*/
+						}
 						//execme = "";
 					//}*/
 					execute(execme);
