@@ -61,7 +61,7 @@ int execute(string commands){
 		} */
 	}
 	vector<char*> charvec = convertvec(getready);	
-	char *argchar[getready.size()]; 
+	char *argchar[getready.size()+1]; 
 	for(int i = 0; i < charvec.size(); ++i){
 		argchar[i] = charvec.at(i);
 	}
@@ -79,15 +79,12 @@ int execute(string commands){
 		exit(1);
 	}
 	else if(pid != 0){
-		if(-1 == wait(0)){
-
-		if(wait(&var) != pid)
-			perror("Error with wait()");
-			return -1;
-		}
+			while(wait(&var) != pid)
+				perror("Error with wait()");
 
 		return var;
 	}
+	return -1;
 }
 
 string specialspacing(string fixer){
@@ -124,7 +121,6 @@ string specialspacing(string fixer){
 
 void runterminal(){
 	vector<string> cmdline;
-	string command = "";
 	struct passwd *pass = getpwuid(getuid());
 	char *curuser = pass->pw_name;
 	char charhost[100];
@@ -132,10 +128,12 @@ void runterminal(){
 	string curhost = charhost;	
 	if(curhost.find('.') != std::string::npos)
 		curhost.resize(curhost.find('.'));
+
 	while(true){
 		//output prompt and take in command line
 		cout << curuser << '@' << curhost << ' ';
 		cout << '$' << ':';
+		string command = "";
 		getline(cin, command);
 
 		if(cin.fail()){
@@ -160,21 +158,29 @@ void runterminal(){
 
 			int conditional;
 			string execme = "";	
+		//	bool passed = true;
+			
 			for(int i = 0; i < cmdline.size(); ++i){
+		//		cout << "execme: " << execme << endl;
 				//if first command is && or ||, do nothing
 				if(execme == "" && (cmdline.at(i) == "&&" || cmdline.at(i) == "||"));
 
 				//if && or || is found in between commands, act accordingly
 				else if(cmdline.at(i) == "&&" || cmdline.at(i) == "||" || cmdline.at(i) == ";"){ 
-					//if its &&
+/*					//if its &&
 					if(cmdline.at(i) == "&&"){
-						conditional = execute(execme);
-						//if first command failed with &&, skip the rest for that command
-						if(conditional == 0){
-							if(i+1 < cmdline.size()){
-								while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
-									++i;
+					//	if(passed){
+							conditional = execute(execme);
+							//if first command failed with &&, skip the rest for that command
+							if(conditional != 0){
+							/*	if(i+1 < cmdline.size()){
+									while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
+										++i;
+								}*/
+/*								passed = false;
 							}
+							else
+								passed = true;
 						}
 						execme = "";
 					}
@@ -182,19 +188,29 @@ void runterminal(){
 					else if(cmdline.at(i) == "||"){
 						conditional = execute(execme);
 						//if first command succeeds with ||, skip the rest for that command
-						if(conditional != 0){
+						if(conditional == 0){
 							if(i+1 < cmdline.size()){
-								while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
+								while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()){ 
+									cout << "cmdat: " << cmdline.at(i);
 									++i;
+								}
 							}
 						}
 						execme = "";
 					}
 					//if its a ;, just execute normally
 					else{
-						execute(execme);
-						execme = "";
-					}
+					//	if(passed){
+						conditional = execute(execme);
+					/*	if(conditional == 0)
+							passed = true;
+						else
+							passed = false;
+						}*/
+				//		execme = "";
+				//	}*/
+					execute(execme);
+					execme = "";
 				}
 				//if a normal command, add to execme for later processing
 				else{
@@ -204,7 +220,6 @@ void runterminal(){
 			}
 			//if there are unexecuted commands after loop ends, execute them
 			if(execme != ""){
-				bool conditional = true;
 				execute(execme);
 				execme = "";
 			}
