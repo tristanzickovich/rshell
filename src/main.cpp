@@ -13,7 +13,7 @@
 using namespace std;
 string cleanup(string cmd){
 	if(!cmd.empty()){	
-			//delete preceeding comments or white space
+		//delete preceeding comments or white space
 		while((cmd.at(0) == ';' || cmd.at(0) == ' ' || cmd.at(0) == '\t')){
 			cmd.erase(0,1);
 			if(cmd.empty())
@@ -21,7 +21,7 @@ string cleanup(string cmd){
 		}
 	}
 
-		//check not duplicate, may become empty after previous task
+	//check not duplicate, may become empty after previous task
 	if(!cmd.empty()){
 		//delete superceeding comments or white space
 		while((cmd.at(cmd.size() - 1) == ';' || cmd.at(cmd.size() - 1) == ' ' || cmd.at(cmd.size() -1) == '\t')){
@@ -56,7 +56,7 @@ int execute(string commands){
 		if(getready.at(0) == "exit" || getready.at(0) == "EXIT"){
 			exit(1);
 		}
-/*		for(int i = 0; i < getready.size(); ++i){
+		/*for(int i = 0; i < getready.size(); ++i){
 			cout << getready.at(i) << endl;
 		} */
 	}
@@ -65,22 +65,22 @@ int execute(string commands){
 	for(int i = 0; i < charvec.size(); ++i){
 		argchar[i] = charvec.at(i);
 	}
-/*	for(int i = 0; argchar[i] != '\0'; ++i){
+	/*for(int i = 0; argchar[i] != '\0'; ++i){
 		cout << "char array: " << argchar[i] << endl;
 	} */
 	int pid = fork();
-//	if(pid == -1){
-//		perror("Error with fork()");
-//		exit(1);
-//	}
+	//if(pid == -1){
+	//	perror("Error with fork()");
+	//	exit(1);
+	//}
 	if(pid == 0){
 		int r = execvp(argchar[0], argchar);
 		perror("Exec failed");
 		exit(1);
 	}
 	else if(pid != 0){
-			while(wait(&var) != pid)
-				perror("Error with wait()");
+		while(wait(&var) != pid)
+			perror("Error with wait()");
 
 		return var;
 	}
@@ -150,7 +150,7 @@ void runterminal(){
 		//if any commands exist (other than spaces or comments) process commands
 		if(command.size() > 0){
 			command = specialspacing(command);
-		//	cout << "command: " << command << endl;
+			//cout << "command: " << command << endl;
 			command.c_str();
 			//split command line by spaces and tabs and push into cmdline vector
 			boost::split(cmdline, command, boost::is_any_of(" , \t"),	
@@ -158,16 +158,16 @@ void runterminal(){
 
 			int conditional;
 			string execme = "";	
-		//	bool passed = true;
+			//bool passed = true;
 			
 			for(int i = 0; i < cmdline.size(); ++i){
-		//		cout << "execme: " << execme << endl;
+				//cout << "execme: " << execme << endl;
 				//if first command is && or ||, do nothing
 				if(execme == "" && (cmdline.at(i) == "&&" || cmdline.at(i) == "||"));
 
 				//if && or || is found in between commands, act accordingly
 				else if(cmdline.at(i) == "&&" || cmdline.at(i) == "||" || cmdline.at(i) == ";"){ 
-/*					//if its &&
+					/*//if its &&
 					if(cmdline.at(i) == "&&"){
 					//	if(passed){
 							conditional = execute(execme);
@@ -177,7 +177,7 @@ void runterminal(){
 									while(cmdline.at(i+1) != ";" && i+1 < cmdline.size()) 
 										++i;
 								}*/
-/*								passed = false;
+								/*passed = false;
 							}
 							else
 								passed = true;
@@ -200,15 +200,15 @@ void runterminal(){
 					}
 					//if its a ;, just execute normally
 					else{
-					//	if(passed){
+						//if(passed){
 						conditional = execute(execme);
-					/*	if(conditional == 0)
+						/*if(conditional == 0)
 							passed = true;
 						else
 							passed = false;
 						}*/
-				//		execme = "";
-				//	}*/
+						//execme = "";
+					//}*/
 					execute(execme);
 					execme = "";
 				}
