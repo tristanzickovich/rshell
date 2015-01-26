@@ -14,7 +14,8 @@ using namespace std;
 string cleanup(string cmd){
 	if(!cmd.empty()){	
 		//delete preceeding comments or white space
-		while((cmd.at(0) == ';' || cmd.at(0) == ' ' || cmd.at(0) == '\t')){
+		while((cmd.at(0) == ';' || cmd.at(0) == ' ' || cmd.at(0) == '\t' 
+			|| cmd.at(0) == '|' || cmd.at(0) == '&')){
 			cmd.erase(0,1);
 			if(cmd.empty())
 				break;
@@ -24,8 +25,9 @@ string cleanup(string cmd){
 	//check not duplicate, may become empty after previous task
 	if(!cmd.empty()){
 		//delete superceeding comments or white space
-		while((cmd.at(cmd.size() - 1) == ';' || cmd.at(cmd.size() - 1) == ' ' || cmd.at(cmd.size() -1) == '\t')){
-			cmd.resize(cmd.size() - 1);
+		while((cmd.at(cmd.size()-1) == ';' || cmd.at(cmd.size()-1) == ' ' || cmd.at(cmd.size()-1) == '\t'
+			|| cmd.at(cmd.size()-1) == '|' || cmd.at(cmd.size()-1) == '&')){
+			cmd.resize(cmd.size()-1);
 			if(cmd.empty())
 				break;
 		}

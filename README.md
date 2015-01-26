@@ -20,7 +20,9 @@
 		`echo first || echo second && echo third`
 	* Comments can be added to a line using the '#' character
 	* To exit, type the command `exit`
+	* Any of the following characters entered before commands will be ignored:
+		' ' space, '	' tab, ';' semi-colon, '&' ampersand, '|' vertical bar
+	* The above are also handled if appended to the end of your command
 
 ## Known Bugs and Limitations:
-	* "&&" and "||" are not supported as a beginning command, will abort program
 	* A long command line of the same character will sometimes seg fault and cause memory issues
