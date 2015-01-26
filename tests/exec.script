@@ -1,8 +1,5 @@
-Script started on Fri 23 Jan 2015 11:25:19 PM PST
+Script started on Sun 25 Jan 2015 08:58:33 PM PST
 ~
-tzick002@hammer $ #[Kls
-[0m[01;34mbin[0m/  [01;34mcs61[0m/  [01;34mDesktop[0m/  [01;34mDocuments[0m/  [01;34mDownloads[0m/  [01;34mMusic[0m/  [01;34mPictures[0m/  [01;34mPublic[0m/  [01;34mTemplates[0m/  [01;34mVideos[0m/
-[m~
 tzick002@hammer $ cd Documents/rshell
 ~/Documents/rshell
 tzick002@hammer $ make
@@ -11,183 +8,161 @@ g++ -ansi -pedantic -Wall -Werror src/main.cpp -o bin/rshell
 ~/Documents/rshell
 tzick002@hammer $ bin/rshell
 tzick002@hammer $ #begin test cases
-tzick002@hammer $ #l test blank line
+tzick002@hammer $ #test blank line
 tzick002@hammer $ 
-tzick002@hammer $ ls#comments work      
+tzick002@hammer $ ls#comments work, after commands or at start of line
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ ls  # comment
+tzick002@hammer $ ls #comment
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ ls # comment
+tzick002@hammer $ ls     #   comment
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ ls -a#command with flag
+tzick002@hammer $ ls -a #command with flag
 .  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-tzick002@hammer $ ls -a -s l #multiple glag    flags
+tzick002@hammer $ ls -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a #command with many repeat flags
+.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
+tzick002@hammer $ ls -a -s #command with more than one flag
 total 68
-drwx------ 6 tzick002 csmajs  4096 Jan 23 23:22 .
-drwx------ 7 tzick002 csmajs  4096 Jan 16 16:30 ..
-drwx------ 2 tzick002 csmajs  4096 Jan 23 23:23 bin
-drwx------ 8 tzick002 csmajs  4096 Jan 23 23:21 .git
--rw------- 1 tzick002 csmajs 35122 Jan 16 16:30 LICENSE
--rw------- 1 tzick002 csmajs   210 Jan 22 19:38 Makefile
--rw------- 1 tzick002 csmajs   748 Jan 23 23:21 README.md
-drwx------ 3 tzick002 csmajs  4096 Jan 23 22:58 src
-drwx------ 2 tzick002 csmajs  4096 Jan 23 23:22 tests
-tzick002@hammer $ ls -a -a l -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a- a-a   -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a #many flag         command with may n   ny flags
-ls: invalid option -- '-'
-Try `ls --help' for more information.
-tzick002@hammer $ ls -a
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-tzick002@hammer $                                                                                                                                #many spaces
-tzick002@hammer $ 															#many tb abs
-tzick002@hammer $ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; #mayn  ny semi colons
-tzick002@hammer $ ; #inc   single semi co    colon
-tzick002@hammer $ ; ; ;;;;;;;;;; ; ; ;              ;;;;;;;;;;;;;;;;;          ;;  ; ; #semicolons and             colongs and spaces             s and spaces
-tzick002@hammer $ 	 	 	  	    	  	  	 	 	   #tabs and spaces
-tzick002@hammer $ ls;pws d;ls-  -a; echo     echoo  hi;#mulp tiple commands on a single line, and ending withs emi         line withs emi      semi colon
+ 4 .   4 ..   4 bin   4 .git  36 LICENSE   4 Makefile   4 README.md   4 src   4 tests
+tzick002@hammer $ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#tons of semicolons
+tzick002@hammer $ ; #single semicolon
+tzick002@hammer $ ; ; ;;;; ;;; ;; ;;  			;;	;	;;	;;	;;;;;	#just semicolons, spaces and tabs
+tzick002@hammer $ ls;pwd;ls-a   -a;echo test#multiple commands on single line
 bin  LICENSE  Makefile	README.md  src	tests
 /home/csmajs/tzick002/Documents/rshell
 .  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-tzick002@hammer $ ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;ls;pwd;ls -a;echo hi;#many commands sinlg el          on a single liine   ne
+test
+tzick002@hammer $ ls ; pwd ; ls -a ; echo test ; #same commands on same line with spaces in  between
 bin  LICENSE  Makefile	README.md  src	tests
 /home/csmajs/tzick002/Documents/rshell
 .  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
+test
+tzick002@hammer $ ls; ; ;; ; ;; ; ;	 ;; ls ; ;; ; 	 ;; ; pwd #multiple commands same line with extra semicolons spaces and tabs
+bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
 /home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-hi
-tzick002@hammer $         ls;      ls ;; ; ;; ls ;; ;; ; ; ls #s commands with spaces and semi colons randm     sprinkled randomly
+tzick002@hammer $ ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;#many commands single line
 bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ afsdfasdfsda sd   #non valid command
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+tzick002@hammer $ dddddddddddddddddddd #invalid command
 Exec failed: No such file or directory
-tzick002@hammer $ adddddddddddd             dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd#long invalid command
+tzick002@hammer $ dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd#long com   inc valid command
 Exec failed: No such file or directory
-tzick002@hammer $ dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd#man   very long invalid command
 Segmentation fault
 ~/Documents/rshell
 tzick002@hammer $ ls
 [0m[01;34mbin[0m/  LICENSE  Makefile  README.md  [01;34msrc[0m/  [01;34mtests[0m/
 [m~/Documents/rshell
-tzick002@hammer $ bim[Kn/rshell
-tzick002@hammer $ #  many    very long command o         n invalid command seg faults
-tzick002@hammer $ ls&&echo hi #connector           condition    tionals
+tzick002@hammer $ bin/rshell
+tzick002@hammer $ #long string of invalid command characters vaus    causes seg. fault #bug
+tzick002@hammer $ #start of connector testing
+tzick002@hammer $ false && ls
+tzick002@hammer $ true && ls
 bin  LICENSE  Makefile	README.md  src	tests
-hi
-tzick002@hammer $ cadfafsd&&echo hi #false     false and true
-Exec failed: No such file or directory
-hi
-tzick002@hammer $ #flas   alse and true does not work
-tzick002@hammer $ ls  asdfjsdfk   || echo hi #false or true
-Exec failed: No such file or directory
-hi
-tzick002@hammer $ echo hi || echo hi #   true or true
-hi
-hi
-tzick002@hammer $ #true or true does not work
-tzick002@hammer $ false && false && false && echo hi #multiple conditionals
-hi
-tzick002@hammer $ #multiple conditionals do not work
-tzick002@hammer $ tu rue || false || true || echo hi
-hi
-tzick002@hammer $ #end of conditionals, do no work properly
-tzick002@hammer $ ls  ls  	ls; 	;	pwd; 	;	eh e  echo test	#many commands with tabs
+tzick002@hammer $ false || ls
 bin  LICENSE  Makefile	README.md  src	tests
-/home/csmajs/tzick002/Documents/rshell
-test
-tzick002@hammer $ #conclude test case                    test exit fun   fu  command  
+tzick002@hammer $ true || ls
+tzick002@hammer $ #same without sapce    paces upcoming
+tzick002@hammer $ false&&ls
+tzick002@hammer $ true&&ls
+bin  LICENSE  Makefile	README.md  src	tests
+tzick002@hammer $ false}}  ||ls
+bin  LICENSE  Makefile	README.md  src	tests
+tzick002@hammer $ ture   rye  y ue||ls
+tzick002@hammer $ #multiple connectors to  in the same line
+tzick002@hammer $ echo 1 && echo 2 || echo 3
+1
+2
+tzick002@hammer $ eh cho1  1 || echo 2 | && echo 3
+1
+3
+tzick002@hammer $ echo 1 && echo 2 || echo 3 && echo 4 || echo 5 && echo 6
+1
+2
+4
+6
+tzick002@hammer $ echo 1 || echo 2 || echo 3 || echo 4 || echo 5 || echo 6 || echo 7 || echo 8 || echo 9 || echo 10
+1
+tzick002@hammer $ echo 1 && echo 2 && echo 3 * && echo 4 && echo 5 && echo 6 && echo 7 && echo 8 && echo 9 * && echo 1- 0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+tzick002@hammer $ echo 1 && echo 2 || echo 3 && echo 4 || echo 5 && echo 6 || echo 7 && echo 8 || echo 9 && echo 10
+1
+2
+4
+6
+8
+10
+tzick002@hammer $ && echo 1 && echo 2
+terminate called after throwing an instance of 'std::out_of_range'
+  what():  basic_string::at
+Aborted
+~/Documents/rshell
+tzick002@hammer $ ls
+[0m[01;34mbin[0m/  LICENSE  Makefile  README.md  [01;34msrc[0m/  [01;34mtests[0m/
+[m~/Documents/rshell
+tzick002@hammer $ bib[Kn/rshell
+tzick002@hammer $ #connector (&& or ||) at the start causes program to abort
+tzick002@hammer $ echo 1 && echo 2 &&
+1
+2
+tzick002@hammer $ #echo     connector (&& or ||) at the end will be ei  ignored if no following call
+tzick002@hammer $ echo 1 ||
+1
+tzick002@hammer $ #ctrl-D test
+tzick002@hammer $ exiting
+~/Documents/rshell
+tzick002@hammer $ bin/rshell
+tzick002@hammer $ #ctrl-D exits
+tzick002@hammer $ #k it notifies user of exit
+tzick002@hammer $ #next and lastly test the exit funtion
 tzick002@hammer $ exit
 ~/Documents/rshell
-tzick002@hammer $ #this concludes test cases
+tzick002@hammer $ bin/rshell
+tzick002@hammer $ #exit works, next test after commands
+tzick002@hammer $ ls;pwd;exit
+bin  LICENSE  Makefile	README.md  src	tests
+/home/csmajs/tzick002/Documents/rshell
+~/Documents/rshell
+tzick002@hammer $ bin/rshell
+tzick002@hammer $ #exit works, will not exit if aff  ttached to command, as following           the w folo lowing will demonstrate
+tzick002@hammer $ ls exit;
+ls: cannot access exit: No such file or directory
+tzick002@hammer $ #this concludes testing
+tzick002@hammer $ echo bye && exit
+bye
 ~/Documents/rshell
 tzick002@hammer $ exit
 exit
 
-Script done on Fri 23 Jan 2015 11:46:59 PM PST
+Script done on Sun 25 Jan 2015 09:24:29 PM PST
