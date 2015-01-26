@@ -119,17 +119,6 @@ string specialspacing(string fixer){
 	return fixer;
 }
 
-int determinest(vector<string> cline, int start){
-	int num = 0;
-	for(unsigned i = start; i < cline.size(); ++i){
-		if(cline.at(i) == "||"){
-			num = 2;
-			break;
-		}
-	}
-	return num;
-}
-
 void runterminal(){
 	vector<string> cmdline;
 	struct passwd *pass = getpwuid(getuid());
@@ -166,14 +155,12 @@ void runterminal(){
 			//split command line by spaces and tabs and push into cmdline vector
 			boost::split(cmdline, command, boost::is_any_of(" , \t"),	
 				  boost::token_compress_on);
-
+			cmdline.push_back(";");
 			int conditional;
 			string execme = "";	
 			bool passed = true; 
-			int det = 0;
 			//0 = neither, 1 = and, 2 = or
 			int lastcmd = 0;
-			det = determinest(cmdline, 0);
 		
 			for(unsigned i = 0; i < cmdline.size(); ++i){
 				//cout << "execme: " << execme << endl;
@@ -182,25 +169,26 @@ void runterminal(){
 
 				//if && or || is found in between commands, act accordingly
 				else if(cmdline.at(i) == "&&" || cmdline.at(i) == "||" || cmdline.at(i) == ";"){ 
-					//if its &&
-					if(cmdline.at(i) == "&&"){
+					//if last was ; (or a brand new command)
+					if(lastcmd == 0){
+						conditional = execute(execme);
+						if(conditional == 0)
+							passed = true;
+						else
+							passed = false;
+					}
+					//if last was &&
+					else if(lastcmd == 1){
 						if(passed){
 							conditional = execute(execme);
-							if(conditional != 0){
-								passed = false;
-							}
-							else
+							if(conditional == 0)
 								passed = true;
+							else
+								passed = false;
 						}
-						execme = "";
-						lastcmd = 1;
 					}
-					//if its ||
-					else if(cmdline.at(i) == "||"){
-						if(det == 2){	
-							passed = false;
-							det = 0;
-						}
+					//if last was ||
+					else if(lastcmd == 2){
 						if(!passed){
 							conditional = execute(execme);
 							if(conditional == 0)
@@ -208,26 +196,16 @@ void runterminal(){
 							else
 								passed = false;
 						}
-						execme = "";
-						lastcmd = 2;
 					}
-					//if its a ;, just execute normally
-					
-					else{
-						if(passed){
-							conditional = execute(execme);
-							if(conditional == 0)
-								passed = true;
-							else
-								passed = false;
-						}
-						//passed = true;
-						determinest(cmdline, i);
-						execme = "";
+					//set what last cmd operator was	
+					if(cmdline.at(i) == ";")
 						lastcmd = 0;
-					}
-					//execute(execme);
-					//execme = "";
+					else if(cmdline.at(i) == "&&")
+						lastcmd = 1;
+					else if(cmdline.at(i) == "||")
+						lastcmd = 2;
+
+					execme = "";
 				}
 				//if a normal command, add to execme for later processing
 				else{
@@ -235,7 +213,7 @@ void runterminal(){
 					execme.append(" ");
 				}
 			}
-			//if there are unexecuted commands after loop ends, execute them
+	/*		//if there are unexecuted commands after loop ends, execute them
 			if(execme != ""){
 				if(passed && lastcmd != 2){
 					execute(execme);
@@ -244,7 +222,7 @@ void runterminal(){
 					execute(execme);
 				}
 				execme = "";
-			}
+			} */
 		}
 	}	
 }	
