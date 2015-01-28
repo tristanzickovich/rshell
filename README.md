@@ -7,7 +7,7 @@ ex)
 ``$ pwd``
 ``home/curuser/Documents/rshell``
 
-#Running:
+##Running:
 1) ``git clone https://github.com/tristanzickovich/rshell.git``
 
 2) ``cd rshell``
