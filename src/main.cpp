@@ -40,7 +40,7 @@ vector<char*> convertvec(vector<string> conv){
 
 	for(unsigned i = 0; i < conv.size(); ++i){
 		string temp = conv.at(i);
-		char *piece = new char[conv.size() + 1];
+		char *piece = new char[temp.size() + 1];
 		charvec.push_back(strcpy(piece, temp.c_str()));
 	}
 	charvec.push_back(NULL);
