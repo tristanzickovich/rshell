@@ -29,4 +29,4 @@ space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 * The above are also handled if appended to the end of your command
 
 ## Known Bugs and Limitations:
-* There are no known bugs
+* There are some memory leaks that have yet to be resolved 
