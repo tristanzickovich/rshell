@@ -20,7 +20,7 @@ ex)
 ##Use:
 * Enter commands
 * Multiple commands can be entered on a single line separated by a ';'
-* Rshell also supports the "&&" and "||" connectors:
+* Rshell also supports the "&&" and "||" connectors:<br />
 `echo first || echo second && echo third`
 * Comments can be added to a line using the '#' character
 * To exit, type the command `exit`
