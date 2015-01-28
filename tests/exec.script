@@ -1,4 +1,4 @@
-Script started on Sun 25 Jan 2015 08:58:33 PM PST
+Script started on Tue 27 Jan 2015 09:19:09 PM PST
 ~
 tzick002@hammer $ cd Documents/rshell
 ~/Documents/rshell
@@ -10,37 +10,46 @@ tzick002@hammer $ bin/rshell
 tzick002@hammer $ #begin test cases
 tzick002@hammer $ #test blank line
 tzick002@hammer $ 
-tzick002@hammer $ ls#comments work, after commands or at start of line
+tzick002@hammer $ ls #comments work after commands or start of line
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ ls #comment
+tzick002@hammer $ ls#comment right after command
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ ls     #   comment
+tzick002@hammer $ ls			#comment
 bin  LICENSE  Makefile	README.md  src	tests
 tzick002@hammer $ ls -a #command with flag
 .  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-tzick002@hammer $ ls -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a #command with many repeat flags
+tzick002@hammer $ ls -a -a -a -a -a a-  -a -a a-  -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a #command with lots of flags
 .  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
-tzick002@hammer $ ls -a -s #command with more than one flag
+tzick002@hammer $ ls -a -s -l #command i with multiple differen  t flags
 total 68
- 4 .   4 ..   4 bin   4 .git  36 LICENSE   4 Makefile   4 README.md   4 src   4 tests
-tzick002@hammer $ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#tons of semicolons
-tzick002@hammer $ ; #single semicolon
-tzick002@hammer $ ; ; ;;;; ;;; ;; ;;  			;;	;	;;	;;	;;;;;	#just semicolons, spaces and tabs
-tzick002@hammer $ ls;pwd;ls-a   -a;echo test#multiple commands on single line
+ 4 drwx------ 6 tzick002 csmajs  4096 Jan 27 21:14 .
+ 4 drwx------ 7 tzick002 csmajs  4096 Jan 16 16:30 ..
+ 4 drwx------ 2 tzick002 csmajs  4096 Jan 27 21:16 bin
+ 4 drwx------ 8 tzick002 csmajs  4096 Jan 27 21:14 .git
+36 -rw------- 1 tzick002 csmajs 35122 Jan 16 16:30 LICENSE
+ 4 -rw------- 1 tzick002 csmajs   210 Jan 23 23:49 Makefile
+ 4 -rw------- 1 tzick002 csmajs   907 Jan 27 21:13 README.md
+ 4 drwx------ 3 tzick002 csmajs  4096 Jan 27 20:22 src
+ 4 drwx------ 2 tzick002 csmajs  4096 Jan 27 21:15 tests
+tzick002@hammer $ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; #line of all semi colons
+tzick002@hammer $ ; #single e semi colon
+tzick002@hammer $ ; ; ;;;;;;     ;;; ;; 			;; ;;  #semicolons spaces and tabs
+tzick002@hammer $ ls;pwd;ls-  -a; echo test; #multiple commands on single line, and semi colon at end of line
 bin  LICENSE  Makefile	README.md  src	tests
 /home/csmajs/tzick002/Documents/rshell
 .  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
 test
-tzick002@hammer $ ls ; pwd ; ls -a ; echo test ; #same commands on same line with spaces in  between
+tzick002@hammer $ ls ; pwd ; ls -a ; echo test ; #same commands with spaces in between commann ds ans   d semicolons
 bin  LICENSE  Makefile	README.md  src	tests
 /home/csmajs/tzick002/Documents/rshell
 .  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
 test
-tzick002@hammer $ ls; ; ;; ; ;; ; ;	 ;; ls ; ;; ; 	 ;; ; pwd #multiple commands same line with extra semicolons spaces and tabs
-bin  LICENSE  Makefile	README.md  src	tests
+tzick002@hammer $ ls ;; ;; ;;; pwd ;; 	 ;; 	;	ls -a	; echo test #commands with extra semi colons spaces and tabs
 bin  LICENSE  Makefile	README.md  src	tests
 /home/csmajs/tzick002/Documents/rshell
-tzick002@hammer $ ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;#many commands single line
+.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
+test
+tzick002@hammer $ ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls; #mann y commands single line
 bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
@@ -66,103 +75,82 @@ bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ dddddddddddddddddddd #invalid command
+bin  LICENSE  Makefile	README.md  src	tests
+bin  LICENSE  Makefile	README.md  src	tests
+tzick002@hammer $ asdfasdredfd #invalid command
 Exec failed: No such file or directory
-tzick002@hammer $ dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd#long com   inc valid command
-Exec failed: No such file or directory
-Segmentation fault
-~/Documents/rshell
-tzick002@hammer $ ls
-[0m[01;34mbin[0m/  LICENSE  Makefile  README.md  [01;34msrc[0m/  [01;34mtests[0m/
-[m~/Documents/rshell
-tzick002@hammer $ bin/rshell
-tzick002@hammer $ #long string of invalid command characters vaus    causes seg. fault #bug
-tzick002@hammer $ #start of connector testing
+tzick002@hammer $ dddddfffffffffffffffffffffffffffffffddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd #very long invalid command
+Exec failed: File name too long
+tzick002@hammer $ 
+tzick002@hammer $ #start testing string      connectors && and ||
+tzick002@hammer $ false&&ls
 tzick002@hammer $ false && ls
 tzick002@hammer $ true && ls
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ false || ls
-bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ true || ls
-tzick002@hammer $ #same without sapce    paces upcoming
-tzick002@hammer $ false&&ls
 tzick002@hammer $ true&&ls
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ false}}  ||ls
+tzick002@hammer $ false||ls
 bin  LICENSE  Makefile	README.md  src	tests
-tzick002@hammer $ ture   rye  y ue||ls
-tzick002@hammer $ #multiple connectors to  in the same line
-tzick002@hammer $ echo 1 && echo 2 || echo 3
+tzick002@hammer $ false || ls
+bin  LICENSE  Makefile	README.md  src	tests
+tzick002@hammer $ ture   rue || ls
+tzick002@hammer $ #now multiple connectors on sinl gle line
+tzick002@hammer $ true && false   && echo hi
+tzick002@hammer $ echo hi && echo bye || echo h hi
+hi
+bye
+tzick002@hammer $ echo 1 && echo 2 || echo 3 || echo 4 || echo 5 && echo 6
 1
 2
-tzick002@hammer $ eh cho1  1 || echo 2 | && echo 3
-1
-3
-tzick002@hammer $ echo 1 && echo 2 || echo 3 && echo 4 || echo 5 && echo 6
-1
-2
-4
 6
-tzick002@hammer $ echo 1 || echo 2 || echo 3 || echo 4 || echo 5 || echo 6 || echo 7 || echo 8 || echo 9 || echo 10
+tzick002@hammer $ echo 1 || echo 2 || echo 3 && echo 4 && echo 5 || echo 6
 1
-tzick002@hammer $ echo 1 && echo 2 && echo 3 * && echo 4 && echo 5 && echo 6 && echo 7 && echo 8 && echo 9 * && echo 1- 0
-1
-2
-3
 4
 5
-6
+tzick002@hammer $ echo 1 || echo 2 && echo 3 || echo 4 && echo 5 || echo 6 && echo 7
+1
+3
+5
 7
-8
-9
-10
-tzick002@hammer $ echo 1 && echo 2 || echo 3 && echo 4 || echo 5 && echo 6 || echo 7 && echo 8 || echo 9 && echo 10
-1
-2
-4
-6
-8
-10
-tzick002@hammer $ && echo 1 && echo 2
-terminate called after throwing an instance of 'std::out_of_range'
-  what():  basic_string::at
-Aborted
-~/Documents/rshell
-tzick002@hammer $ ls
-[0m[01;34mbin[0m/  LICENSE  Makefile  README.md  [01;34msrc[0m/  [01;34mtests[0m/
-[m~/Documents/rshell
-tzick002@hammer $ bib[Kn/rshell
-tzick002@hammer $ #connector (&& or ||) at the start causes program to abort
-tzick002@hammer $ echo 1 && echo 2 &&
-1
-2
-tzick002@hammer $ #echo     connector (&& or ||) at the end will be ei  ignored if no following call
-tzick002@hammer $ echo 1 ||
-1
-tzick002@hammer $ #ctrl-D test
+tzick002@hammer $ #connectors at front and back are accounted for and igr nored
+tzick002@hammer $ && echo hi
+hi
+tzick002@hammer $ echo hi &&;
+hi
+tzick002@hammer $ echo hi &&; echo test
+hi
+test
+tzick002@hammer $ #extra connectors
+tzick002@hammer $ echo hi && echo test && && echo test 2
+hi
+test
+test 2
+tzick002@hammer $ #extra connectors are ignored
+tzick002@hammer $ echo hi || || echo bye
+hi
+tzick002@hammer $ #end of file, ctrl-d test
 tzick002@hammer $ exiting
 ~/Documents/rshell
 tzick002@hammer $ bin/rshell
-tzick002@hammer $ #ctrl-D exits
-tzick002@hammer $ #k it notifies user of exit
-tzick002@hammer $ #next and lastly test the exit funtion
+tzick002@hammer $ #end of file character exits program with prompting message
+tzick002@hammer $ #finally, we will test the exit functionality of rshell
+tzick002@hammer $ #exit on its own line
 tzick002@hammer $ exit
 ~/Documents/rshell
 tzick002@hammer $ bin/rshell
-tzick002@hammer $ #exit works, next test after commands
-tzick002@hammer $ ls;pwd;exit
+tzick002@hammer $ #exit after commands (won't work unless sp  properly separated by connector)
+tzick002@hammer $ ls exit
+ls: cannot access exit: No such file or directory
+tzick002@hammer $ false && exit
+tzick002@hammer $ #exit in many commands on single line
+tzick002@hammer $ ls; pwe d; ls -a; echo test; echo goodbye; exit; ls; echo nothing else will execute;; ;; #goo   d done, testing complete
 bin  LICENSE  Makefile	README.md  src	tests
 /home/csmajs/tzick002/Documents/rshell
-~/Documents/rshell
-tzick002@hammer $ bin/rshell
-tzick002@hammer $ #exit works, will not exit if aff  ttached to command, as following           the w folo lowing will demonstrate
-tzick002@hammer $ ls exit;
-ls: cannot access exit: No such file or directory
-tzick002@hammer $ #this concludes testing
-tzick002@hammer $ echo bye && exit
-bye
+.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
+test
+goodbye
 ~/Documents/rshell
 tzick002@hammer $ exit
 exit
 
-Script done on Sun 25 Jan 2015 09:24:29 PM PST
+Script done on Tue 27 Jan 2015 09:37:05 PM PST
