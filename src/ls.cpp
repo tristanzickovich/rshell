@@ -7,6 +7,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
+#include <pwd.h>
+#include <grp.h>
+#include <vector>
 
 using namespace std;
 
@@ -25,19 +28,69 @@ void printa(const char *path){
 
 void printl(){
 	struct stat sb;
-	if(stat(".", &sb) == -1){
+
+	if(stat("a.out", &sb) == -1){
 		perror("Stat Error:");
 		exit(1);
 	}
+	//set owner of item to ownr
+	struct passwd *pass = getpwuid(sb.st_uid);
+	char *ownr = pass->pw_name;	
+	//set group owner to gownr
+	struct group *grp = getgrgid(sb.st_gid);
+	char *gownr = grp->gr_name; 
+	//output permissions line
+	if(S_ISDIR(sb.st_mode))
+		cout << 'd';
+	else if(S_ISLNK(sb.st_mode))
+		cout << 's';
+	else
+		cout << '-';
+	if(S_IRUSR & sb.st_mode)
+		cout << 'r';
+	else
+		cout << '-';
+	if(S_IWUSR & sb.st_mode)
+		cout << 'w';
+	else
+		cout << '-';
+	if(S_IXUSR & sb.st_mode)
+		cout << 'x';
+	else
+		cout << '-';
+	if(S_IRGRP & sb.st_mode)
+		cout << 'r';
+	else
+		cout << '-';
+	if(S_IWGRP & sb.st_mode)
+		cout << 'w';
+	else
+		cout << '-';
+	if(S_IXGRP & sb.st_mode)
+		cout << 'x';
+	else
+		cout << '-';
+	if(S_IROTH & sb.st_mode)
+		cout << 'r';
+	else
+		cout << '-';
+	if(S_IWOTH & sb.st_mode)
+		cout << 'w';
+	else
+		cout << '-';
+	if(S_IXOTH & sb.st_mode)
+		cout << 'x';
+	else
+		cout << '-';
+	
+	cout << ' ' << ownr;
+	cout << ' ' << gownr;
+	cout << endl;
 	cout << sb.st_dev << endl
 		<< sb.st_ino << endl
-		<< sb.st_mode << endl
 		<< sb.st_nlink << endl
 		<< sb.st_uid << endl
 		<< sb.st_gid << endl
-		<< sb.st_rdev << endl
-		<< sb.st_size << endl
-		<< sb.st_blksize << endl
 		<< sb.st_blocks << endl
 		<< sb.st_atime << endl
 		<< sb.st_mtime << endl
