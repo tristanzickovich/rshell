@@ -83,22 +83,59 @@ void printl(){
 		cout << 'x';
 	else
 		cout << '-';
+	//number of links
 	cout << ' ' << sb.st_nlink;	
+	//owner of item
 	cout << ' ' << ownr;
+	//group owner of item
 	cout << ' ' << gownr;
+	//size of item in bytes
 	cout << ' ' << sb.st_size;
+	//time item was last modified
 	string lastmodtime = ctime(&sb.st_mtime);
 	cout << ' ' << lastmodtime.substr(4,12);
+	//add last output of file name FIXME
 	cout << endl;
+}
+
+void printr(){
+}
+
+int countflags(int size, char **args){
+	int numflags = 0;
+	bool ainc = false, linc = false, rinc = false;
+	for(unsigned i = 1; i < size; ++i)
+		if(args[1][0] != '-')
+			break;
+		else{
+			for(unsigned j = 1; args[i][j] != 0; ++j){
+				if(args[i][j] == 'a' && !ainc){
+					ainc = true;
+					++numflags;
+				}
+				else if(args[i][j] == 'l' && !linc){
+					linc = true;
+					numflags += 2;
+				}
+				else if(args[i][j] == 'R' && !rinc){
+					rinc = true;
+					numflags += 4;
+				}
+			}
+		}
+	return numflags;
 }
 
 int main(int argc, char *argv[]){
 	string aflag = "-a", lflag = "-l", rflag = "-R";
-	for(unsigned i = 1; i < argc; ++i){
+	/*for(unsigned i = 1; i < argc; ++i){
 		if(string(argv[i]) == aflag)
 			printa(".");
 		else if(string(argv[i]) == lflag)
 			printl();
-	}
+		else if (string(argv[i]) == rflag)
+			printr();
+	}*/
+	cout << countflags(argc, argv) << endl;
 	return 0;
 }
