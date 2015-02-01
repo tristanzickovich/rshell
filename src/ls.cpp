@@ -111,6 +111,18 @@ void printl(){
 void printr(){
 }
 
+void printlr(){
+}
+
+void printla(){
+}
+
+void printar(){
+}
+
+void printarl(){
+}
+
 int countflags(int size, char **args){
 	int numflags = 0;
 	bool ainc = false, linc = false, rinc = false;
@@ -137,15 +149,6 @@ int countflags(int size, char **args){
 }
 
 int main(int argc, char *argv[]){
-	string aflag = "-a", lflag = "-l", rflag = "-R";
-	/*for(unsigned i = 1; i < argc; ++i){
-		if(string(argv[i]) == aflag)
-			printa(".");
-		else if(string(argv[i]) == lflag)
-			printl();
-		else if (string(argv[i]) == rflag)
-			printr();
-	}*/
 	int numflags = countflags(argc, argv);
 	
 	//if flag is -a
@@ -154,6 +157,21 @@ int main(int argc, char *argv[]){
 	//if flag is -l
 	else if(numflags == 2)
 		printl();
+	//if flag is -la (or some combo thereof)
+	else if (numflags == 3)
+		printla();
+	//if flag is -R
+	else if (numflags == 4)
+		printr();
+	//if flag is -aR (or some combo thereof)
+	else if (numflags == 5)
+		printar();
+	//if flag is -lR (or some combo thereof)
+	else if (numflags == 6)
+		printlr();
+	//if flag is -aRl (or some combo thereof)
+	else if (numflags == 7)
+		printarl();
 	return 0;
 }
 
