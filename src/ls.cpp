@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <pwd.h>
 #include <grp.h>
+#include <time.h>
 #include <vector>
 
 using namespace std;
@@ -82,19 +83,13 @@ void printl(){
 		cout << 'x';
 	else
 		cout << '-';
-	
+	cout << ' ' << sb.st_nlink;	
 	cout << ' ' << ownr;
 	cout << ' ' << gownr;
+	cout << ' ' << sb.st_size;
+	string lastmodtime = ctime(&sb.st_mtime);
+	cout << ' ' << lastmodtime.substr(4,12);
 	cout << endl;
-	cout << sb.st_dev << endl
-		<< sb.st_ino << endl
-		<< sb.st_nlink << endl
-		<< sb.st_uid << endl
-		<< sb.st_gid << endl
-		<< sb.st_blocks << endl
-		<< sb.st_atime << endl
-		<< sb.st_mtime << endl
-		<< sb.st_ctime << endl;
 }
 
 int main(int argc, char *argv[]){
