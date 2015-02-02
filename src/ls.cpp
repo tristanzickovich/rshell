@@ -23,15 +23,42 @@ char greengrey [] = {"\033[1;100;32m"};
 char normal [] = {"\033[0;00m"};
 
 
-void printa(const char *path){
-	DIR * pdir = opendir(path); //return a pointer to dir
+void printa(){
+	struct stat sb;
+	DIR * pdir = opendir("."); //return a pointer to dir
 	if(pdir == NULL){
 		perror("Can't open directory");
 		exit(1);
 	}
+	bool hidden = false;
 	dirent *direntp;
-	while(direntp = readdir(pdir))
-		cout << direntp->d_name << "  " ;
+	while(direntp = readdir(pdir)){
+		char *path = direntp->d_name;
+		if(stat(path, &sb) == -1){
+			perror("Stat Error");
+			exit(1);
+		}
+		if(path[0] == '.')
+			hidden = true;
+		else
+			hidden = false;
+
+		if(S_ISDIR(sb.st_mode)){	
+			if(hidden)
+				cout <<  bluegrey << path << '/' << normal << "  "; 
+			else
+				cout << blue << path << '/' << normal << "  "; 
+		}
+		else if(S_IXUSR & sb.st_mode){
+			if(hidden)
+				cout << greengrey << path << normal << "  ";
+			else
+				cout << green << path << normal << "  ";
+		}
+		else
+			cout << path << "  " ;
+
+	}
 	cout << endl;
 	closedir(pdir);
 }
@@ -49,7 +76,7 @@ void printl(bool listall){
 		char *path = direntp->d_name;
 		
 		if(stat(path, &sb) == -1){
-			perror("Stat Error:");
+			perror("Stat Error");
 			exit(1);
 		}
 		if(path[0] == '.')
@@ -183,7 +210,7 @@ int main(int argc, char *argv[]){
 	
 	//if flag is -a
 	if(numflags == 1)
-		printa(".");
+		printa();
 	//if flag is -l
 	else if(numflags == 2)
 		printl(false);
