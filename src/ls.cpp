@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <cstdio>
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +15,13 @@
 #include <vector>
 
 using namespace std;
+//globals for color change
+char blue [] = {"\033[1;34m"};
+char bluegrey [] = {"\033[1;100;34m"};
+char green [] = {"\033[1;32m"};
+char greengrey [] = {"\033[1;100;32m"};
+char normal [] = {"\033[0;00m"};
+
 
 void printa(const char *path){
 	DIR * pdir = opendir(path); //return a pointer to dir
@@ -34,6 +43,7 @@ void printl(bool listall){
 		perror("Can't open directory");
 		exit(1);
 	}
+	bool hidden = false;
 	dirent *direntp;
 	while(direntp = readdir(pdir)){
 		char *path = direntp->d_name;
@@ -42,8 +52,12 @@ void printl(bool listall){
 			perror("Stat Error:");
 			exit(1);
 		}
+		if(path[0] == '.')
+			hidden = true;
+		else
+			hidden = false;
 		//check if -l or -la.  If -l skip files starting with '.'
-		if((!listall && path[0] != '.') || listall){
+		if((!listall && !hidden) || listall){
 			//set owner of item to ownr
 			struct passwd *pass = getpwuid(sb.st_uid);
 			char *ownr = pass->pw_name;	
@@ -100,12 +114,27 @@ void printl(bool listall){
 			//group owner of item
 			cout << ' ' << gownr;
 			//size of item in bytes
-			cout << ' ' << sb.st_size;
+			cout << ' ' << setw(7) << right <<  sb.st_size;
 			//time item was last modified
 			string lastmodtime = ctime(&sb.st_mtime);
 			cout << ' ' << lastmodtime.substr(4,12);
-			//add last output of file name FIXME
-			cout << ' ' << path;
+			//output file name 
+			//if file is a directory
+			if(S_ISDIR(sb.st_mode)){	
+				if(hidden)
+					cout << ' ' <<  bluegrey << path << '/' << normal;
+				else
+					cout << ' ' << blue << path << '/' << normal;
+			}
+			else if(S_IXUSR & sb.st_mode){
+				if(hidden)
+					cout << ' ' << greengrey << path << normal;
+				else
+					cout << ' ' << green << path << normal;
+			}
+			else
+				cout << ' ' << path;
+
 			cout << endl;
 		}
 	}
