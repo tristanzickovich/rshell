@@ -63,6 +63,35 @@ void printa(){
 	closedir(pdir);
 }
 
+int totalflag(bool listall){
+	int total = 0;
+	struct stat sb;
+	DIR * pdir = opendir("."); //return a pointer to dir
+	if(pdir == NULL){
+		perror("Can't open directory");
+		exit(1);
+	}
+	bool hidden = false;
+	dirent *direntp;
+	while(direntp = readdir(pdir)){
+		char *path = direntp->d_name;
+		
+		if(stat(path, &sb) == -1){
+			perror("Stat Error");
+			exit(1);
+		}
+		if(path[0] == '.')
+			hidden = true;
+		else
+			hidden = false;
+		//check if -l or -la.  If -l skip files starting with '.'
+		if((!listall && !hidden) || listall){
+			total += sb.st_blocks;
+		}
+	}
+	return total/2;
+}
+
 void printl(bool listall){
 	struct stat sb;
 	DIR * pdir = opendir("."); //return a pointer to dir
@@ -72,6 +101,7 @@ void printl(bool listall){
 	}
 	bool hidden = false;
 	dirent *direntp;
+	cout << "total " << totalflag(listall) << endl;
 	while(direntp = readdir(pdir)){
 		char *path = direntp->d_name;
 		
@@ -279,9 +309,6 @@ void printr(const char *dirname, bool listall){
 void printlr(){
 }
 
-void printar(){
-}
-
 void printarl(){
 }
 
@@ -327,7 +354,7 @@ int main(int argc, char *argv[]){
 		printr(".", false);
 	//if flag is -aR (or some combo thereof)
 	else if (numflags == 5)
-		printar();
+		printr(".", true);
 	//if flag is -lR (or some combo thereof)
 	else if (numflags == 6)
 		printlr();
