@@ -168,7 +168,46 @@ void printl(bool listall){
 	closedir(pdir);
 }
 
-void printr(){
+void printr(const char *dirname, bool listall){
+	struct stat sb;
+	DIR * pdir = opendir(dirname); //return a pointer to dir
+	if(pdir == NULL){
+		perror("Can't open directory");
+		exit(1);
+	}
+	bool hidden = false;
+	dirent *direntp;
+	while(direntp = readdir(pdir)){
+		char *path = direntp->d_name;
+		
+		if(stat(path, &sb) == -1){
+			perror("Stat Error");
+			exit(1);
+		}
+		if(path[0] == '.')
+			hidden = true;
+		else
+			hidden = false;
+		if((!listall && !hidden) || listall){
+			if(S_ISDIR(sb.st_mode)){	
+				if(hidden)
+					cout <<  bluegrey << path << '/' << normal << "  "; 
+				else
+					cout << blue << path << '/' << normal << "  "; 
+			}
+			else if(S_IXUSR & sb.st_mode){
+				if(hidden)
+					cout << greengrey << path << normal << "  ";
+				else
+					cout << green << path << normal << "  ";
+			}
+			else
+				cout << path << "  " ;
+
+		}
+	}
+	cout << endl;
+	closedir(pdir);
 }
 
 void printlr(){
@@ -219,7 +258,7 @@ int main(int argc, char *argv[]){
 		printl(true);
 	//if flag is -R
 	else if (numflags == 4)
-		printr();
+		printr(".", false);
 	//if flag is -aR (or some combo thereof)
 	else if (numflags == 5)
 		printar();
