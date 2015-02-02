@@ -12,7 +12,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
-#include <vector>
+#include <queue>
 
 using namespace std;
 //globals for color change
@@ -168,6 +168,61 @@ void printl(bool listall){
 	closedir(pdir);
 }
 
+void printrRecursed(const char *dirname, bool listall){ 
+	struct stat sb;
+	DIR * pdir = opendir(dirname); //return a pointer to dir
+	if(pdir == NULL){
+		perror("Can't open directory");
+		exit(1);
+	}
+	bool hidden = false;
+	string filepath;
+	queue<char *> additionalpaths;
+	dirent *direntp;
+	cout << endl << "./" << dirname << ':' << endl;
+	while(direntp = readdir(pdir)){
+		char *hlpr = direntp->d_name;
+		string paths = (string)dirname + '/' + direntp->d_name;
+		char *path = (char *)paths.c_str();
+		//char *path = direntp->d_name;
+		
+		if(stat(path, &sb) == -1){
+			perror("Stat Error");
+			exit(1);
+		}
+		if(hlpr[0] == '.')
+			hidden = true;
+		else
+			hidden = false;
+		if((!listall && !hidden) || listall){
+			if(S_ISDIR(sb.st_mode)){	
+				additionalpaths.push(hlpr);
+				if(hidden)
+					cout <<  bluegrey << hlpr << '/' << normal << "  "; 
+				else
+					cout << blue << hlpr << '/' << normal << "  "; 
+			}
+			else if(S_IXUSR & sb.st_mode){
+				if(hidden)
+					cout << greengrey << hlpr << normal << "  ";
+				else
+					cout << green << hlpr << normal << "  ";
+			}
+			else
+				cout << hlpr << "  " ;
+
+		}
+	}
+	cout << endl;
+	while(!additionalpaths.empty()){
+		string next =  additionalpaths.front();
+		//cerr << next << endl;
+		additionalpaths.pop();
+		printrRecursed(next.c_str(), listall);
+	}
+	closedir(pdir);
+}
+
 void printr(const char *dirname, bool listall){
 	struct stat sb;
 	DIR * pdir = opendir(dirname); //return a pointer to dir
@@ -176,8 +231,12 @@ void printr(const char *dirname, bool listall){
 		exit(1);
 	}
 	bool hidden = false;
+	string filepath;
+	queue<char *> additionalpaths;
 	dirent *direntp;
+	cout << dirname << ':' << endl;
 	while(direntp = readdir(pdir)){
+
 		char *path = direntp->d_name;
 		
 		if(stat(path, &sb) == -1){
@@ -190,6 +249,7 @@ void printr(const char *dirname, bool listall){
 			hidden = false;
 		if((!listall && !hidden) || listall){
 			if(S_ISDIR(sb.st_mode)){	
+				additionalpaths.push(path);
 				if(hidden)
 					cout <<  bluegrey << path << '/' << normal << "  "; 
 				else
@@ -207,6 +267,12 @@ void printr(const char *dirname, bool listall){
 		}
 	}
 	cout << endl;
+	while(!additionalpaths.empty()){
+		string next =  additionalpaths.front();
+		//cerr << next << endl;
+		additionalpaths.pop();
+		printrRecursed(next.c_str(), listall);
+	}
 	closedir(pdir);
 }
 
