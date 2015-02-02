@@ -13,27 +13,54 @@
 #include <grp.h>
 #include <time.h>
 #include <queue>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
+
 //globals for color change
 char blue [] = {"\033[1;34m"};
 char bluegrey [] = {"\033[1;100;34m"};
 char green [] = {"\033[1;32m"};
 char greengrey [] = {"\033[1;100;32m"};
 char normal [] = {"\033[0;00m"};
+//Following struct and bool taken from: https://ideone.com/fork/6j56qR
+struct case_insensitive_less : public std::binary_function< char,char,bool >
+{
+	bool operator () (char x, char y) const
+	{
+		return toupper( static_cast< unsigned char >(x)) <
+		toupper( static_cast< unsigned char >(y));
+	}
+};
+bool NoCaseLess(const std::string &a, const std::string &b)
+{
+	return std::lexicographical_compare( a.begin(),a.end(),
+	b.begin(),b.end(), case_insensitive_less() );
+}
 
-
-void printa(){
-	struct stat sb;
-	DIR * pdir = opendir("."); //return a pointer to dir
+vector<char *> alporder(const char* start){
+	vector<char *> newvec;
+	DIR * pdir = opendir(start);
 	if(pdir == NULL){
 		perror("Can't open directory");
 		exit(1);
 	}
-	bool hidden = false;
+
 	dirent *direntp;
-	while(direntp = readdir(pdir)){
-		char *path = direntp->d_name;
+	while(direntp = readdir(pdir))
+		newvec.push_back(direntp->d_name);
+
+	sort(newvec.begin(), newvec.end(), NoCaseLess);
+	return newvec;
+}
+
+void printa(){
+	struct stat sb;
+	bool hidden = false;
+	vector<char *> filesvec = alporder(".");
+	for(unsigned i = 0; i < filesvec.size(); ++i){
+		char *path = filesvec.at(i);
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
 			exit(1);
@@ -60,9 +87,9 @@ void printa(){
 
 	}
 	cout << endl;
-	closedir(pdir);
 }
 
+// -l flag helper for total output
 int totalflag(bool listall){
 	int total = 0;
 	struct stat sb;
@@ -94,16 +121,11 @@ int totalflag(bool listall){
 
 void printl(bool listall){
 	struct stat sb;
-	DIR * pdir = opendir("."); //return a pointer to dir
-	if(pdir == NULL){
-		perror("Can't open directory");
-		exit(1);
-	}
 	bool hidden = false;
-	dirent *direntp;
 	cout << "total " << totalflag(listall) << endl;
-	while(direntp = readdir(pdir)){
-		char *path = direntp->d_name;
+	vector<char *> filesvec = alporder(".");
+	for(unsigned i = 0; i < filesvec.size(); ++i){
+		char *path = filesvec.at(i);
 		
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
@@ -195,26 +217,18 @@ void printl(bool listall){
 			cout << endl;
 		}
 	}
-	closedir(pdir);
 }
 
 void printrRecursed(const char *dirname, bool listall){ 
 	struct stat sb;
-	DIR * pdir = opendir(dirname); //return a pointer to dir
-	if(pdir == NULL){
-		perror("Can't open directory");
-		exit(1);
-	}
 	bool hidden = false;
-	string filepath;
 	queue<char *> additionalpaths;
-	dirent *direntp;
 	cout << endl << "./" << dirname << ':' << endl;
-	while(direntp = readdir(pdir)){
-		char *hlpr = direntp->d_name;
-		string paths = (string)dirname + '/' + direntp->d_name;
+	vector<char *> filesvec = alporder(dirname);
+	for(unsigned i = 0; i < filesvec.size(); ++i){
+		char *hlpr = filesvec.at(i);
+		string paths = (string)dirname + '/' + filesvec.at(i); 
 		char *path = (char *)paths.c_str();
-		//char *path = direntp->d_name;
 		
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
@@ -250,25 +264,17 @@ void printrRecursed(const char *dirname, bool listall){
 		additionalpaths.pop();
 		printrRecursed(next.c_str(), listall);
 	}
-	closedir(pdir);
 }
 
 void printr(const char *dirname, bool listall){
 	struct stat sb;
-	DIR * pdir = opendir(dirname); //return a pointer to dir
-	if(pdir == NULL){
-		perror("Can't open directory");
-		exit(1);
-	}
 	bool hidden = false;
-	string filepath;
 	queue<char *> additionalpaths;
-	dirent *direntp;
 	cout << dirname << ':' << endl;
-	while(direntp = readdir(pdir)){
-
-		char *path = direntp->d_name;
-		
+	vector<char *> filesvec = alporder(".");
+	for(unsigned i = 0; i < filesvec.size(); ++i){
+		char *path = filesvec.at(i);
+	
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
 			exit(1);
@@ -303,7 +309,6 @@ void printr(const char *dirname, bool listall){
 		additionalpaths.pop();
 		printrRecursed(next.c_str(), listall);
 	}
-	closedir(pdir);
 }
 
 void printlr(){
