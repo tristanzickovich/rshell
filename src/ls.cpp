@@ -48,7 +48,7 @@ vector<char *> alporder(const char* start){
 	}
 
 	dirent *direntp;
-	while(direntp = readdir(pdir))
+	while((direntp = readdir(pdir)))
 		newvec.push_back(direntp->d_name);
 
 	sort(newvec.begin(), newvec.end(), NoCaseLess);
@@ -100,7 +100,7 @@ int totalflag(bool listall){
 	}
 	bool hidden = false;
 	dirent *direntp;
-	while(direntp = readdir(pdir)){
+	while((direntp = readdir(pdir))){
 		char *path = direntp->d_name;
 		
 		if(stat(path, &sb) == -1){
@@ -258,11 +258,15 @@ void printrRecursed(const char *dirname, bool listall){
 		}
 	}
 	cout << endl;
+	string case1 = ".";
+	string case2 = "..";
 	while(!additionalpaths.empty()){
 		string next =  additionalpaths.front();
-		//cerr << next << endl;
 		additionalpaths.pop();
-		printrRecursed(next.c_str(), listall);
+		if(next != case1 && next != case2){
+			cout << next;
+			printrRecursed(next.c_str(), listall);
+		}
 	}
 }
 
@@ -303,11 +307,15 @@ void printr(const char *dirname, bool listall){
 		}
 	}
 	cout << endl;
+	string case1 = ".";
+	string case2 = "..";
 	while(!additionalpaths.empty()){
 		string next =  additionalpaths.front();
-		//cerr << next << endl;
 		additionalpaths.pop();
-		printrRecursed(next.c_str(), listall);
+		if(next != case1 && next != case2){
+			cout << next;
+			printrRecursed(next.c_str(), listall);
+		}
 	}
 }
 
@@ -317,7 +325,7 @@ void printlr(){
 void printarl(){
 }
 
-int countflags(int size, char **args){
+int countflags(unsigned size, char **args){
 	int numflags = 0;
 	bool ainc = false, linc = false, rinc = false;
 	for(unsigned i = 1; i < size; ++i)
