@@ -61,7 +61,7 @@ vector<char *> alporder(const char* start){
 	return newvec;
 }
 
-void printa(){
+void printa(bool listall){
 	struct stat sb;
 	bool hidden = false;
 	vector<char *> filesvec = alporder(".");
@@ -75,22 +75,23 @@ void printa(){
 			hidden = true;
 		else
 			hidden = false;
-
-		if(S_ISDIR(sb.st_mode)){	
-			if(hidden)
-				cout <<  bluegrey << path << '/' << normal << "  "; 
+		//check if -a or no flag.  If no flag skip files starting with '.'
+		if((!listall && !hidden) || listall){
+			if(S_ISDIR(sb.st_mode)){	
+				if(hidden)
+					cout <<  bluegrey << path << '/' << normal << "  "; 
+				else
+					cout << blue << path << '/' << normal << "  "; 
+			}
+			else if(S_IXUSR & sb.st_mode){
+				if(hidden)
+					cout << greengrey << path << normal << "  ";
+				else
+					cout << green << path << normal << "  ";
+			}
 			else
-				cout << blue << path << '/' << normal << "  "; 
+				cout << path << "  " ;
 		}
-		else if(S_IXUSR & sb.st_mode){
-			if(hidden)
-				cout << greengrey << path << normal << "  ";
-			else
-				cout << green << path << normal << "  ";
-		}
-		else
-			cout << path << "  " ;
-
 	}
 	cout << endl;
 }
@@ -362,10 +363,9 @@ int countflags(unsigned size, char **args){
 
 int main(int argc, char *argv[]){
 	int numflags = countflags(argc, argv);
-	
 	//if flag is -a
 	if(numflags == 1)
-		printa();
+		printa(true);
 	//if flag is -l
 	else if(numflags == 2)
 		printl(false);
@@ -384,6 +384,9 @@ int main(int argc, char *argv[]){
 	//if flag is -aRl (or some combo thereof)
 	else if (numflags == 7)
 		printarl();
+	else if (numflags == 0){
+		printa(false);
+	}
 	return 0;
 }
 
