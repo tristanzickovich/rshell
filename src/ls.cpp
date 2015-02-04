@@ -9,20 +9,22 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
+#include <limits.h>
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
 #include <queue>
 #include <vector>
 #include <algorithm>
+#include <string.h>
 
 using namespace std;
 
 //globals for color change
 char blue [] = {"\033[1;34m"};
-char bluegrey [] = {"\033[1;100;34m"};
+char bluegrey [] = {"\033[1;47;34m"};
 char green [] = {"\033[1;32m"};
-char greengrey [] = {"\033[1;100;32m"};
+char greengrey [] = {"\033[1;47;32m"};
 char normal [] = {"\033[0;00m"};
 //Following struct and bool taken from: https://ideone.com/fork/6j56qR
 struct case_insensitive_less : public std::binary_function< char,char,bool >
@@ -48,10 +50,13 @@ vector<char *> alporder(const char* start){
 	}
 
 	dirent *direntp;
-	while((direntp = readdir(pdir)))
-		newvec.push_back(direntp->d_name);
-
+	while((direntp = readdir(pdir))){
+		char *c = new char[strlen(direntp->d_name) + 1];
+		strcpy(c, direntp->d_name);
+		newvec.push_back(c);
+	}
 	sort(newvec.begin(), newvec.end(), NoCaseLess);
+	
 	closedir(pdir);
 	return newvec;
 }
@@ -222,9 +227,11 @@ void printl(bool listall){
 
 void printrRecursed(const char *dirname, bool listall){ 
 	struct stat sb;
+	string case1 = ".";
+	string case2 = "..";
 	bool hidden = false;
 	queue<char *> additionalpaths;
-	cout << endl << "./" << dirname << ':' << endl;
+	cout << endl /*<< "./" */ << dirname << ':' << endl;
 	vector<char *> filesvec = alporder(dirname);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *hlpr = filesvec.at(i);
@@ -240,8 +247,12 @@ void printrRecursed(const char *dirname, bool listall){
 		else
 			hidden = false;
 		if((!listall && !hidden) || listall){
-			if(S_ISDIR(sb.st_mode)){	
-				additionalpaths.push(hlpr);
+			if(S_ISDIR(sb.st_mode)){
+				if(path[strlen(path)-1] != '.'){
+					char* p = new char[PATH_MAX + 1];
+					realpath(path, p);
+					additionalpaths.push(p);
+				}
 				if(hidden)
 					cout <<  bluegrey << hlpr << '/' << normal << "  "; 
 				else
@@ -259,21 +270,19 @@ void printrRecursed(const char *dirname, bool listall){
 		}
 	}
 	cout << endl;
-	string case1 = ".";
-	string case2 = "..";
 	while(!additionalpaths.empty()){
-		string next =  additionalpaths.front();
+		string next = additionalpaths.front();
+		delete[] additionalpaths.front();
 		additionalpaths.pop();
-		if(next != case1 && next != case2){
-			cout << next;
 			printrRecursed(next.c_str(), listall);
-		}
 	}
 }
 
 void printr(const char *dirname, bool listall){
 	struct stat sb;
 	bool hidden = false;
+	string case1 = ".";
+	string case2 = "..";
 	queue<char *> additionalpaths;
 	cout << dirname << ':' << endl;
 	vector<char *> filesvec = alporder(".");
@@ -289,8 +298,12 @@ void printr(const char *dirname, bool listall){
 		else
 			hidden = false;
 		if((!listall && !hidden) || listall){
-			if(S_ISDIR(sb.st_mode)){	
-				additionalpaths.push(path);
+			if(S_ISDIR(sb.st_mode)){
+				if(path[strlen(path)-1] != '.'){
+					char* p = new char[PATH_MAX + 1];
+					realpath(path, p);
+					additionalpaths.push(p);
+				}
 				if(hidden)
 					cout <<  bluegrey << path << '/' << normal << "  "; 
 				else
@@ -308,15 +321,11 @@ void printr(const char *dirname, bool listall){
 		}
 	}
 	cout << endl;
-	string case1 = ".";
-	string case2 = "..";
 	while(!additionalpaths.empty()){
 		string next =  additionalpaths.front();
+		delete[] additionalpaths.front();
 		additionalpaths.pop();
-		if(next != case1 && next != case2){
-			cout << next;
-			printrRecursed(next.c_str(), listall);
-		}
+		printrRecursed(next.c_str(), listall);
 	}
 }
 
