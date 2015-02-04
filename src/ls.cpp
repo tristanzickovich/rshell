@@ -52,6 +52,7 @@ vector<char *> alporder(const char* start){
 		newvec.push_back(direntp->d_name);
 
 	sort(newvec.begin(), newvec.end(), NoCaseLess);
+	closedir(pdir);
 	return newvec;
 }
 
