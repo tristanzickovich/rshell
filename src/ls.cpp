@@ -330,10 +330,243 @@ void printr(const char *dirname, bool listall){
 	}
 }
 
-void printlr(){
+void printlrRecursed(const char *dirname, bool listall){
+	struct stat sb;
+	string case1 = ".";
+	string case2 = "..";
+	bool hidden = false;
+	queue<char *> additionalpaths;
+	cout << endl /*<< "./" */ << dirname << ':' << endl;
+	cout << "total " << totalflag(listall) << endl;
+	vector<char *> filesvec = alporder(dirname);
+	for(unsigned i = 0; i < filesvec.size(); ++i){
+		char *hlpr = filesvec.at(i);
+		string paths = (string)dirname + '/' + filesvec.at(i); 
+		char *path = (char *)paths.c_str();
+		
+		if(stat(path, &sb) == -1){
+			perror("Stat Error");
+			exit(1);
+		}
+		if(hlpr[0] == '.')
+			hidden = true;
+		else
+			hidden = false;
+		if((!listall && !hidden) || listall){
+			if(S_ISDIR(sb.st_mode)){
+				if(path[strlen(path)-1] != '.'){
+					char* p = new char[PATH_MAX + 1];
+					realpath(path, p);
+					additionalpaths.push(p);
+				}
+			}
+
+			//set owner of item to ownr
+			struct passwd *pass = getpwuid(sb.st_uid);
+			char *ownr = pass->pw_name;	
+			//set group owner to gownr
+			struct group *grp = getgrgid(sb.st_gid);
+			char *gownr = grp->gr_name; 
+			//output permissions line
+			if(S_ISDIR(sb.st_mode))
+				cout << 'd';
+			else if(S_ISLNK(sb.st_mode))
+				cout << 's';
+			else
+				cout << '-';
+			if(S_IRUSR & sb.st_mode)
+				cout << 'r';
+			else
+				cout << '-';
+			if(S_IWUSR & sb.st_mode)
+				cout << 'w';
+			else
+				cout << '-';
+			if(S_IXUSR & sb.st_mode)
+				cout << 'x';
+			else
+				cout << '-';
+			if(S_IRGRP & sb.st_mode)
+				cout << 'r';
+			else
+				cout << '-';
+			if(S_IWGRP & sb.st_mode)
+				cout << 'w';
+			else
+				cout << '-';
+			if(S_IXGRP & sb.st_mode)
+				cout << 'x';
+			else
+				cout << '-';
+			if(S_IROTH & sb.st_mode)
+				cout << 'r';
+			else
+				cout << '-';
+			if(S_IWOTH & sb.st_mode)
+				cout << 'w';
+			else
+				cout << '-';
+			if(S_IXOTH & sb.st_mode)
+				cout << 'x';
+			else
+				cout << '-';
+			//number of links
+			cout << ' ' << sb.st_nlink;	
+			//owner of item
+			cout << ' ' << ownr;
+			//group owner of item
+			cout << ' ' << gownr;
+			//size of item in bytes
+			cout << ' ' << setw(7) << right <<  sb.st_size;
+			//time item was last modified
+			string lastmodtime = ctime(&sb.st_mtime);
+			cout << ' ' << lastmodtime.substr(4,12);
+			//output file name 
+			//if file is a directory
+			if(S_ISDIR(sb.st_mode)){	
+				if(hidden)
+					cout << ' ' <<  bluegrey << path << '/' << normal;
+				else
+					cout << ' ' << blue << path << '/' << normal;
+			}
+			else if(S_IXUSR & sb.st_mode){
+				if(hidden)
+					cout << ' ' << greengrey << path << normal;
+				else
+					cout << ' ' << green << path << normal;
+			}
+			else
+				cout << ' ' << path;
+
+			cout << endl;
+		}
+	}
+	while(!additionalpaths.empty()){
+		string next =  additionalpaths.front();
+		delete[] additionalpaths.front();
+		additionalpaths.pop();
+		printlrRecursed(next.c_str(), listall);
+	}
+
 }
 
-void printarl(){
+void printlr(const char *dirname, bool listall){
+	struct stat sb;
+	bool hidden = false;
+	string case1 = ".";
+	string case2 = "..";
+	queue<char *> additionalpaths;
+	cout << dirname << ':' << endl;
+	cout << "total " << totalflag(listall) << endl;
+	vector<char *> filesvec = alporder(".");
+	for(unsigned i = 0; i < filesvec.size(); ++i){
+		char *path = filesvec.at(i);
+	
+		if(stat(path, &sb) == -1){
+			perror("Stat Error");
+			exit(1);
+		}
+		if(path[0] == '.')
+			hidden = true;
+		else
+			hidden = false;
+
+		if((!listall && !hidden) || listall){
+			if(S_ISDIR(sb.st_mode)){
+				if(path[strlen(path)-1] != '.'){
+					char* p = new char[PATH_MAX + 1];
+					realpath(path, p);
+					additionalpaths.push(p);
+				}
+			}
+
+			//set owner of item to ownr
+			struct passwd *pass = getpwuid(sb.st_uid);
+			char *ownr = pass->pw_name;	
+			//set group owner to gownr
+			struct group *grp = getgrgid(sb.st_gid);
+			char *gownr = grp->gr_name; 
+			//output permissions line
+			if(S_ISDIR(sb.st_mode))
+				cout << 'd';
+			else if(S_ISLNK(sb.st_mode))
+				cout << 's';
+			else
+				cout << '-';
+			if(S_IRUSR & sb.st_mode)
+				cout << 'r';
+			else
+				cout << '-';
+			if(S_IWUSR & sb.st_mode)
+				cout << 'w';
+			else
+				cout << '-';
+			if(S_IXUSR & sb.st_mode)
+				cout << 'x';
+			else
+				cout << '-';
+			if(S_IRGRP & sb.st_mode)
+				cout << 'r';
+			else
+				cout << '-';
+			if(S_IWGRP & sb.st_mode)
+				cout << 'w';
+			else
+				cout << '-';
+			if(S_IXGRP & sb.st_mode)
+				cout << 'x';
+			else
+				cout << '-';
+			if(S_IROTH & sb.st_mode)
+				cout << 'r';
+			else
+				cout << '-';
+			if(S_IWOTH & sb.st_mode)
+				cout << 'w';
+			else
+				cout << '-';
+			if(S_IXOTH & sb.st_mode)
+				cout << 'x';
+			else
+				cout << '-';
+			//number of links
+			cout << ' ' << sb.st_nlink;	
+			//owner of item
+			cout << ' ' << ownr;
+			//group owner of item
+			cout << ' ' << gownr;
+			//size of item in bytes
+			cout << ' ' << setw(7) << right <<  sb.st_size;
+			//time item was last modified
+			string lastmodtime = ctime(&sb.st_mtime);
+			cout << ' ' << lastmodtime.substr(4,12);
+			//output file name 
+			//if file is a directory
+			if(S_ISDIR(sb.st_mode)){	
+				if(hidden)
+					cout << ' ' <<  bluegrey << path << '/' << normal;
+				else
+					cout << ' ' << blue << path << '/' << normal;
+			}
+			else if(S_IXUSR & sb.st_mode){
+				if(hidden)
+					cout << ' ' << greengrey << path << normal;
+				else
+					cout << ' ' << green << path << normal;
+			}
+			else
+				cout << ' ' << path;
+
+			cout << endl;
+		}
+	}
+	while(!additionalpaths.empty()){
+		string next =  additionalpaths.front();
+		delete[] additionalpaths.front();
+		additionalpaths.pop();
+		printlrRecursed(next.c_str(), listall);
+	}
+
 }
 
 int countflags(unsigned size, char **args){
@@ -380,10 +613,11 @@ int main(int argc, char *argv[]){
 		printr(".", true);
 	//if flag is -lR (or some combo thereof)
 	else if (numflags == 6)
-		printlr();
+		printlr(".", false);
 	//if flag is -aRl (or some combo thereof)
 	else if (numflags == 7)
-		printarl();
+		printlr(".", true);
+	//if no flags
 	else if (numflags == 0){
 		printa(false);
 	}
