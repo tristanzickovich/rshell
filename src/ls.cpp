@@ -62,10 +62,10 @@ vector<char *> alporder(const char* start){
 	return newvec;
 }
 
-void printa(bool listall){
+void printa(const char *dirnm, bool listall){
 	struct stat sb;
 	bool hidden = false;
-	vector<char *> filesvec = alporder(".");
+	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *path = filesvec.at(i);
 		if(stat(path, &sb) == -1){
@@ -162,7 +162,7 @@ int totalflagr(const char *path, bool listall){
 	return total/2;
 }
 
-void printl(bool listall){
+void printl(const char *dirnm, bool listall){
 	struct stat sb;
 	bool hidden = false;
 	cout << "total " << totalflag(listall) << endl;
@@ -372,7 +372,7 @@ void printlrRecursed(const char *dirnm, bool listall){
 	string case2 = "..";
 	bool hidden = false;
 	queue<char *> additionalpaths;
-	cout << endl /*<< "./" */ << dirnm << ':' << endl;
+	cout << endl << "./" << basename((char*)dirnm) << ':' << endl;
 	vector<char *> filesvec = alporder(dirnm);
 	string pathhr = (string)dirnm + '/' + filesvec.at(0); 
 	char *pathh = (char *)pathhr.c_str();
@@ -611,12 +611,14 @@ void printlr(const char *dirnm, bool listall){
 
 }
 
-int countflags(unsigned size, char **args){
+int countflags(unsigned size, char **args, unsigned &breaklocation){
 	int numflags = 0;
 	bool ainc = false, linc = false, rinc = false;
 	for(unsigned i = 1; i < size; ++i)
-		if(args[1][0] != '-')
+		if(args[i][0] != '-'){
+			breaklocation = i;
 			break;
+		}
 		else{
 			for(unsigned j = 1; args[i][j] != 0; ++j){
 				if(args[i][j] == 'a' && !ainc){
@@ -637,31 +639,33 @@ int countflags(unsigned size, char **args){
 }
 
 int main(int argc, char *argv[]){
-	int numflags = countflags(argc, argv);
+	unsigned breaklocation = 0;
+	int numflags = countflags(argc, argv, breaklocation);
+	const char *path = ".";
 	//if flag is -a
 	if(numflags == 1)
-		printa(true);
+		printa(path, true);
 	//if flag is -l
 	else if(numflags == 2)
-		printl(false);
+		printl(path, false);
 	//if flag is -la (or some combo thereof)
 	else if (numflags == 3)
-		printl(true);
+		printl(path, true);
 	//if flag is -R
 	else if (numflags == 4)
-		printr(".", false);
+		printr(path, false);
 	//if flag is -aR (or some combo thereof)
 	else if (numflags == 5)
-		printr(".", true);
+		printr(path, true);
 	//if flag is -lR (or some combo thereof)
 	else if (numflags == 6)
-		printlr(".", false);
+		printlr(path, false);
 	//if flag is -aRl (or some combo thereof)
 	else if (numflags == 7)
-		printlr(".", true);
+		printlr(path, true);
 	//if no flags
 	else if (numflags == 0){
-		printa(false);
+		printa(path, false);
 	}
 	return 0;
 }
