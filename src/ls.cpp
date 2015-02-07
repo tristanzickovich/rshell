@@ -126,6 +126,39 @@ int totalflag(bool listall){
 	return total/2;
 }
 
+int totalflagr(const char *path, bool listall){
+	int total = 0;
+	struct stat sb;
+	DIR * pdir = opendir(path); //return a pointer to dir
+	if(pdir == NULL){
+		perror("Can't open directory");
+		exit(1);
+	}
+	bool hidden = false;
+	dirent *direntp;
+	while((direntp = readdir(pdir))){
+		string pathhs = (string)path + '/' + direntp->d_name;
+		char *pathh = (char *)pathhs.c_str();
+		//string paths = (string)dirname + '/' + filesvec.at(i); 
+		//char *path = (char *)paths.c_str();
+
+		//cout << "path: " << pathh << endl;	
+		if(stat(pathh, &sb) == -1){
+			perror("Stat Error");
+			exit(1);
+		}
+		if(path[0] == '.')
+			hidden = true;
+		else
+			hidden = false;
+		//check if -l or -la.  If -l skip files starting with '.'
+		if((!listall && !hidden) || listall){
+			total += sb.st_blocks;
+		}
+	}
+	return total/2;
+}
+
 void printl(bool listall){
 	struct stat sb;
 	bool hidden = false;
@@ -337,8 +370,11 @@ void printlrRecursed(const char *dirname, bool listall){
 	bool hidden = false;
 	queue<char *> additionalpaths;
 	cout << endl /*<< "./" */ << dirname << ':' << endl;
-	cout << "total " << totalflag(listall) << endl;
 	vector<char *> filesvec = alporder(dirname);
+	string pathhr = (string)dirname + '/' + filesvec.at(0); 
+	char *pathh = (char *)pathhr.c_str();
+	cout << "total " << totalflagr(pathh, listall) << endl;
+
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *hlpr = filesvec.at(i);
 		string paths = (string)dirname + '/' + filesvec.at(i); 
@@ -457,8 +493,11 @@ void printlr(const char *dirname, bool listall){
 	string case2 = "..";
 	queue<char *> additionalpaths;
 	cout << dirname << ':' << endl;
-	cout << "total " << totalflag(listall) << endl;
+	//cout << "total " << totalflag(dirname, listall) << endl;
 	vector<char *> filesvec = alporder(".");
+	//char *pathh = filesvec.at(0);
+	cout << "total " << totalflag(listall) << endl;
+
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *path = filesvec.at(i);
 	
