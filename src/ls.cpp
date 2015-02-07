@@ -638,12 +638,27 @@ int countflags(unsigned size, char **args, unsigned &breaklocation){
 	return numflags;
 }
 
+vector<char *> getfiles(int argc, char **args, unsigned begin){
+	vector<char *> filevec;
+	for(unsigned i = begin; i < (unsigned)argc; ++i)
+		filevec.push_back(args[i]);
+	return filevec;
+}
+
 int main(int argc, char *argv[]){
 	unsigned breaklocation = 0;
 	int numflags = countflags(argc, argv, breaklocation);
 	const char *path = ".";
+	//get file names if passed in
+	if(breaklocation < (unsigned)argc)
+		vector<char *> pathset = getfiles(argc, argv, breaklocation);
+
+	//if no flags
+	if (numflags == 0){
+		printa(path, false);
+	}
 	//if flag is -a
-	if(numflags == 1)
+	else if(numflags == 1)
 		printa(path, true);
 	//if flag is -l
 	else if(numflags == 2)
@@ -664,9 +679,7 @@ int main(int argc, char *argv[]){
 	else if (numflags == 7)
 		printlr(path, true);
 	//if no flags
-	else if (numflags == 0){
-		printa(path, false);
-	}
+	
 	return 0;
 }
 
