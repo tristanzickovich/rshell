@@ -17,6 +17,7 @@
 #include <vector>
 #include <algorithm>
 #include <string.h>
+#include <libgen.h>
 
 using namespace std;
 
@@ -79,9 +80,9 @@ void printa(bool listall){
 		if((!listall && !hidden) || listall){
 			if(S_ISDIR(sb.st_mode)){	
 				if(hidden)
-					cout <<  bluegrey << path << '/' << normal << "  "; 
+					cout <<  bluegrey << path << normal << "/  "; 
 				else
-					cout << blue << path << '/' << normal << "  "; 
+					cout << blue << path << normal << "/  "; 
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
@@ -139,7 +140,7 @@ int totalflagr(const char *path, bool listall){
 	while((direntp = readdir(pdir))){
 		string pathhs = (string)path + '/' + direntp->d_name;
 		char *pathh = (char *)pathhs.c_str();
-		//string paths = (string)dirname + '/' + filesvec.at(i); 
+		//string paths = (string)dirnm + '/' + filesvec.at(i); 
 		//char *path = (char *)paths.c_str();
 
 		//cout << "path: " << pathh << endl;	
@@ -147,7 +148,9 @@ int totalflagr(const char *path, bool listall){
 			perror("Stat Error");
 			exit(1);
 		}
-		if(path[0] == '.')
+		//cout << "Pathh : " <<  pathh << endl;
+		char *hiddencheck = basename(pathh);
+		if(hiddencheck[0] == '.')
 			hidden = true;
 		else
 			hidden = false;
@@ -241,9 +244,9 @@ void printl(bool listall){
 			//if file is a directory
 			if(S_ISDIR(sb.st_mode)){	
 				if(hidden)
-					cout << ' ' <<  bluegrey << path << '/' << normal;
+					cout << ' ' <<  bluegrey << path << normal << '/';
 				else
-					cout << ' ' << blue << path << '/' << normal;
+					cout << ' ' << blue << path << normal << '/';
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
@@ -259,17 +262,17 @@ void printl(bool listall){
 	}
 }
 
-void printrRecursed(const char *dirname, bool listall){ 
+void printrRecursed(const char *dirnm, bool listall){ 
 	struct stat sb;
 	string case1 = ".";
 	string case2 = "..";
 	bool hidden = false;
 	queue<char *> additionalpaths;
-	cout << endl /*<< "./" */ << dirname << ':' << endl;
-	vector<char *> filesvec = alporder(dirname);
+	cout << endl << "./"  << basename((char *)dirnm) << ':' << endl;
+	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *hlpr = filesvec.at(i);
-		string paths = (string)dirname + '/' + filesvec.at(i); 
+		string paths = (string)dirnm + '/' + filesvec.at(i); 
 		char *path = (char *)paths.c_str();
 		
 		if(stat(path, &sb) == -1){
@@ -288,9 +291,9 @@ void printrRecursed(const char *dirname, bool listall){
 					additionalpaths.push(p);
 				}
 				if(hidden)
-					cout <<  bluegrey << hlpr << '/' << normal << "  "; 
+					cout <<  bluegrey << hlpr << normal << "/  "; 
 				else
-					cout << blue << hlpr << '/' << normal << "  "; 
+					cout << blue << hlpr << normal << "/  "; 
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
@@ -312,13 +315,13 @@ void printrRecursed(const char *dirname, bool listall){
 	}
 }
 
-void printr(const char *dirname, bool listall){
+void printr(const char *dirnm, bool listall){
 	struct stat sb;
 	bool hidden = false;
 	string case1 = ".";
 	string case2 = "..";
 	queue<char *> additionalpaths;
-	cout << dirname << ':' << endl;
+	cout << dirnm << ':' << endl;
 	vector<char *> filesvec = alporder(".");
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *path = filesvec.at(i);
@@ -339,9 +342,9 @@ void printr(const char *dirname, bool listall){
 					additionalpaths.push(p);
 				}
 				if(hidden)
-					cout <<  bluegrey << path << '/' << normal << "  "; 
+					cout <<  bluegrey << path << normal << "/  "; 
 				else
-					cout << blue << path << '/' << normal << "  "; 
+					cout << blue << path << normal << "/  "; 
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
@@ -363,21 +366,21 @@ void printr(const char *dirname, bool listall){
 	}
 }
 
-void printlrRecursed(const char *dirname, bool listall){
+void printlrRecursed(const char *dirnm, bool listall){
 	struct stat sb;
 	string case1 = ".";
 	string case2 = "..";
 	bool hidden = false;
 	queue<char *> additionalpaths;
-	cout << endl /*<< "./" */ << dirname << ':' << endl;
-	vector<char *> filesvec = alporder(dirname);
-	string pathhr = (string)dirname + '/' + filesvec.at(0); 
+	cout << endl /*<< "./" */ << dirnm << ':' << endl;
+	vector<char *> filesvec = alporder(dirnm);
+	string pathhr = (string)dirnm + '/' + filesvec.at(0); 
 	char *pathh = (char *)pathhr.c_str();
 	cout << "total " << totalflagr(pathh, listall) << endl;
 
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *hlpr = filesvec.at(i);
-		string paths = (string)dirname + '/' + filesvec.at(i); 
+		string paths = (string)dirnm + '/' + filesvec.at(i); 
 		char *path = (char *)paths.c_str();
 		
 		if(stat(path, &sb) == -1){
@@ -461,18 +464,18 @@ void printlrRecursed(const char *dirname, bool listall){
 			//if file is a directory
 			if(S_ISDIR(sb.st_mode)){	
 				if(hidden)
-					cout << ' ' <<  bluegrey << path << '/' << normal;
+					cout << ' ' <<  bluegrey << basename(path) << normal << '/';
 				else
-					cout << ' ' << blue << path << '/' << normal;
+					cout << ' ' << blue << basename(path) << normal << '/';
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
-					cout << ' ' << greengrey << path << normal;
+					cout << ' ' << greengrey << basename(path) << normal;
 				else
-					cout << ' ' << green << path << normal;
+					cout << ' ' << green << basename(path) << normal;
 			}
 			else
-				cout << ' ' << path;
+				cout << ' ' << basename(path);
 
 			cout << endl;
 		}
@@ -486,14 +489,14 @@ void printlrRecursed(const char *dirname, bool listall){
 
 }
 
-void printlr(const char *dirname, bool listall){
+void printlr(const char *dirnm, bool listall){
 	struct stat sb;
 	bool hidden = false;
 	string case1 = ".";
 	string case2 = "..";
 	queue<char *> additionalpaths;
-	cout << dirname << ':' << endl;
-	//cout << "total " << totalflag(dirname, listall) << endl;
+	cout << dirnm << ':' << endl;
+	//cout << "total " << totalflag(dirnm, listall) << endl;
 	vector<char *> filesvec = alporder(".");
 	//char *pathh = filesvec.at(0);
 	cout << "total " << totalflag(listall) << endl;
@@ -583,9 +586,9 @@ void printlr(const char *dirname, bool listall){
 			//if file is a directory
 			if(S_ISDIR(sb.st_mode)){	
 				if(hidden)
-					cout << ' ' <<  bluegrey << path << '/' << normal;
+					cout << ' ' <<  bluegrey << path << normal << '/';
 				else
-					cout << ' ' << blue << path << '/' << normal;
+					cout << ' ' << blue << path << normal << '/';
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
