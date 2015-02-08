@@ -169,7 +169,7 @@ void printl(const char *dirnm, bool listall){
 	struct stat sb;
 	bool hidden = false;
 	cout << "total " << totalflag(listall) << endl;
-	vector<char *> filesvec = alporder(".");
+	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *path = filesvec.at(i);
 		
@@ -327,7 +327,7 @@ void printr(const char *dirnm, bool listall){
 	string case2 = "..";
 	queue<char *> additionalpaths;
 	cout << dirnm << ':' << endl;
-	vector<char *> filesvec = alporder(".");
+	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *path = filesvec.at(i);
 	
@@ -504,7 +504,7 @@ void printlr(const char *dirnm, bool listall){
 	queue<char *> additionalpaths;
 	cout << dirnm << ':' << endl;
 	//cout << "total " << totalflag(dirnm, listall) << endl;
-	vector<char *> filesvec = alporder(".");
+	vector<char *> filesvec = alporder(dirnm);
 	//char *pathh = filesvec.at(0);
 	cout << "total " << totalflag(listall) << endl;
 
