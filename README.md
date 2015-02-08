@@ -6,6 +6,7 @@ ex)
 
 ``$ pwd``
 ``home/curuser/Documents/rshell``
+#Rshell
 
 ##Running:
 1) ``git clone https://github.com/tristanzickovich/rshell.git``
@@ -30,3 +31,24 @@ space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 
 ## Known Bugs and Limitations:
 * There are some memory leaks that have yet to be resolved 
+#Ls:
+
+##Running:
+1) ``git clone https://github.com/tristanzickovich/rshell.git``
+
+2) ``cd rshell``
+
+3) ``make``
+
+4) ``bin/ls``
+
+
+##Use:
+* Run executable with flags: `-a`, `-l`, `-R`, or any combo
+* Unknown flags and duplicate flags will be ignored
+* Directories will be printed in blue, executables in green,
+	and hidden files with a grey background (colored text and background
+	will be combined where applicable).
+
+## Known Bugs and Limitations
+* No known memory leaks or bugs
