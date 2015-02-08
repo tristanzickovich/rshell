@@ -93,6 +93,7 @@ void printa(const char *dirnm, bool listall){
 			else
 				cout << path << "  " ;
 		}
+		delete path; //added to delete mem assigned in alporder
 	}
 	cout << endl;
 }
@@ -124,6 +125,7 @@ int totalflag(bool listall){
 			total += sb.st_blocks;
 		}
 	}
+	closedir(pdir);
 	return total/2;
 }
 
@@ -159,6 +161,7 @@ int totalflagr(const char *path, bool listall){
 			total += sb.st_blocks;
 		}
 	}
+	closedir(pdir);
 	return total/2;
 }
 
@@ -259,6 +262,7 @@ void printl(const char *dirnm, bool listall){
 
 			cout << endl;
 		}
+		delete filesvec.at(i); //deletes mem allocated in alporder
 	}
 }
 
@@ -305,6 +309,7 @@ void printrRecursed(const char *dirnm, bool listall){
 				cout << hlpr << "  " ;
 
 		}
+		delete filesvec.at(i); //alporder mem dealloc
 	}
 	cout << endl;
 	while(!additionalpaths.empty()){
@@ -356,6 +361,7 @@ void printr(const char *dirnm, bool listall){
 				cout << path << "  " ;
 
 		}
+		delete filesvec.at(i); //alporder mem dealloc
 	}
 	cout << endl;
 	while(!additionalpaths.empty()){
@@ -479,6 +485,7 @@ void printlrRecursed(const char *dirnm, bool listall){
 
 			cout << endl;
 		}
+		delete filesvec.at(i); //alporder mem dealloc
 	}
 	while(!additionalpaths.empty()){
 		string next =  additionalpaths.front();
@@ -601,6 +608,7 @@ void printlr(const char *dirnm, bool listall){
 
 			cout << endl;
 		}
+		delete filesvec.at(i); //alporder mem dealloc
 	}
 	while(!additionalpaths.empty()){
 		string next =  additionalpaths.front();
