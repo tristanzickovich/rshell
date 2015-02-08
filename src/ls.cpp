@@ -614,7 +614,7 @@ void printlr(const char *dirnm, bool listall){
 int countflags(unsigned size, char **args, unsigned &breaklocation){
 	int numflags = 0;
 	bool ainc = false, linc = false, rinc = false;
-	for(unsigned i = 1; i < size; ++i)
+	for(unsigned i = 1; i < size; ++i){
 		if(args[i][0] != '-'){
 			breaklocation = i;
 			break;
@@ -634,7 +634,9 @@ int countflags(unsigned size, char **args, unsigned &breaklocation){
 					numflags += 4;
 				}
 			}
+			breaklocation = i + 1;
 		}
+	}
 	return numflags;
 }
 
@@ -646,40 +648,44 @@ vector<char *> getfiles(int argc, char **args, unsigned begin){
 }
 
 int main(int argc, char *argv[]){
-	unsigned breaklocation = 0;
+	unsigned breaklocation = 1;
 	int numflags = countflags(argc, argv, breaklocation);
 	const char *path = ".";
+	vector<char *> pathset; 
 	//get file names if passed in
-	if(breaklocation < (unsigned)argc)
-		vector<char *> pathset = getfiles(argc, argv, breaklocation);
-
-	//if no flags
-	if (numflags == 0){
-		printa(path, false);
-	}
-	//if flag is -a
-	else if(numflags == 1)
-		printa(path, true);
-	//if flag is -l
-	else if(numflags == 2)
-		printl(path, false);
-	//if flag is -la (or some combo thereof)
-	else if (numflags == 3)
-		printl(path, true);
-	//if flag is -R
-	else if (numflags == 4)
-		printr(path, false);
-	//if flag is -aR (or some combo thereof)
-	else if (numflags == 5)
-		printr(path, true);
-	//if flag is -lR (or some combo thereof)
-	else if (numflags == 6)
-		printlr(path, false);
-	//if flag is -aRl (or some combo thereof)
-	else if (numflags == 7)
-		printlr(path, true);
-	//if no flags
-	
+	if(breaklocation < (unsigned)argc) 
+		pathset = getfiles(argc, argv, breaklocation);
+	unsigned i = 0;
+	do{
+		if(pathset.size() > 0)
+			path = pathset.at(i);
+		//if no flags
+		if (numflags == 0){
+			printa(path, false);
+		}
+		//if flag is -a
+		else if(numflags == 1)
+			printa(path, true);
+		//if flag is -l
+		else if(numflags == 2)
+			printl(path, false);
+		//if flag is -la (or some combo thereof)
+		else if (numflags == 3)
+			printl(path, true);
+		//if flag is -R
+		else if (numflags == 4)
+			printr(path, false);
+		//if flag is -aR (or some combo thereof)
+		else if (numflags == 5)
+			printr(path, true);
+		//if flag is -lR (or some combo thereof)
+		else if (numflags == 6)
+			printlr(path, false);
+		//if flag is -aRl (or some combo thereof)
+		else if (numflags == 7)
+			printlr(path, true);
+		++i;
+	} while(i < pathset.size());
 	return 0;
 }
 
