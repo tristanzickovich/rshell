@@ -83,7 +83,6 @@ int execute(string commands){
 	else if(pid != 0){
 		while(wait(&var) != pid)
 			perror("Error with wait()");
-		
 		return var;
 	}
 	return -1;
