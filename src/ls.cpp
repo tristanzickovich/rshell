@@ -67,12 +67,19 @@ void printa(const char *dirnm, bool listall){
 	bool hidden = false;
 	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
-		char *path = filesvec.at(i);
+		//char *path = filesvec.at(i);
+		//cout << "Path: " << path << endl;
+		char *path = new char[100];
+		strcpy(path, dirnm);
+		strcat(path, "/");
+		//fix if just . or ..,  remove those early / after stat #FIXME
+		strcat(path, filesvec.at(i));
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
 			exit(1);
 		}
-		if(path[0] == '.')
+		char *hiddencheck = basename(path);
+		if(hiddencheck[0] == '.')
 			hidden = true;
 		else
 			hidden = false;
@@ -93,7 +100,8 @@ void printa(const char *dirnm, bool listall){
 			else
 				cout << path << "  " ;
 		}
-		delete path; //added to delete mem assigned in alporder
+		delete [] path; //added to delete mem assigned in alporder
+		delete [] filesvec.at(i);
 	}
 	cout << endl;
 }
@@ -262,7 +270,7 @@ void printl(const char *dirnm, bool listall){
 
 			cout << endl;
 		}
-		delete filesvec.at(i); //deletes mem allocated in alporder
+		delete [] filesvec.at(i); //deletes mem allocated in alporder
 	}
 }
 
@@ -309,7 +317,7 @@ void printrRecursed(const char *dirnm, bool listall){
 				cout << hlpr << "  " ;
 
 		}
-		delete filesvec.at(i); //alporder mem dealloc
+		delete [] filesvec.at(i); //alporder mem dealloc
 	}
 	cout << endl;
 	while(!additionalpaths.empty()){
@@ -361,7 +369,7 @@ void printr(const char *dirnm, bool listall){
 				cout << path << "  " ;
 
 		}
-		delete filesvec.at(i); //alporder mem dealloc
+		delete [] filesvec.at(i); //alporder mem dealloc
 	}
 	cout << endl;
 	while(!additionalpaths.empty()){
@@ -485,7 +493,7 @@ void printlrRecursed(const char *dirnm, bool listall){
 
 			cout << endl;
 		}
-		delete filesvec.at(i); //alporder mem dealloc
+		delete [] filesvec.at(i); //alporder mem dealloc
 	}
 	while(!additionalpaths.empty()){
 		string next =  additionalpaths.front();
@@ -608,7 +616,7 @@ void printlr(const char *dirnm, bool listall){
 
 			cout << endl;
 		}
-		delete filesvec.at(i); //alporder mem dealloc
+		delete [] filesvec.at(i); //alporder mem dealloc
 	}
 	while(!additionalpaths.empty()){
 		string next =  additionalpaths.front();
