@@ -18,7 +18,7 @@ ex)
 4) ``bin/rshell``
 
 
-##Use:
+##Use and Limitations:
 * Enter commands
 * Multiple commands can be entered on a single line separated by a ';'
 * Rshell also supports the "&&" and "||" connectors:<br />
@@ -29,7 +29,7 @@ ex)
 space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 * The above are also handled if appended to the end of your command
 
-## Known Bugs and Limitations:
+## Known Bugs:
 * There are some memory leaks that have yet to be resolved 
 
 #Ls:
@@ -44,7 +44,7 @@ space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 4) ``bin/ls``
 
 
-##Use:
+##Use and Limitations:
 * Run executable with flags: `-a`, `-l`, `-R`, or any combo
 * Combos of flags can be listed as a single flag. Ex. `-al`, `-Rla`, ... etc.
 * Unknown flags and duplicate flags will be ignored
@@ -52,9 +52,11 @@ space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 	the flags must be called first. Ex. `bin/ls -a filename`
 * Multiple files can be specified, each will be executed in sequence of which was typed first.
 	They will be output one after another. 
+* Bad file names will cause the program to exit (therefore files listed after bad file will not be attended to). 
+* Flags with multiple files will be applied to all files specified
 * Directories will be printed in blue, executables in green,
 	and hidden files with a grey background (colored text and background
 	will be combined where applicable).
 
-## Known Bugs and Limitations
+## Known Bugs
 * No known memory leaks or bugs
