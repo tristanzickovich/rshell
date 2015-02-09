@@ -102,37 +102,6 @@ void printa(const char *dirnm, bool listall){
 	}
 	cout << endl;
 }
-/*
-// -l flag helper for total output
-int totalflag(bool listall){
-	int total = 0;
-	struct stat sb;
-	DIR * pdir = opendir("."); //return a pointer to dir
-	if(pdir == NULL){
-		perror("Can't open directory");
-		exit(1);
-	}
-	bool hidden = false;
-	dirent *direntp;
-	while((direntp = readdir(pdir))){
-		char *path = direntp->d_name;
-		
-		if(stat(path, &sb) == -1){
-			perror("Stat Error");
-			exit(1);
-		}
-		if(path[0] == '.')
-			hidden = true;
-		else
-			hidden = false;
-		//check if -l or -la.  If -l skip files starting with '.'
-		if((!listall && !hidden) || listall){
-			total += sb.st_blocks;
-		}
-	}
-	closedir(pdir);
-	return total/2;
-}*/
 
 int totalflagr(const char *path, bool listall){
 	int total = 0;
@@ -147,15 +116,11 @@ int totalflagr(const char *path, bool listall){
 	while((direntp = readdir(pdir))){
 		string pathhs = (string)path + '/' + direntp->d_name;
 		char *pathh = (char *)pathhs.c_str();
-		//string paths = (string)dirnm + '/' + filesvec.at(i); 
-		//char *path = (char *)paths.c_str();
 
-		//cout << "path: " << pathh << endl;	
 		if(stat(pathh, &sb) == -1){
 			perror("Stat Error");
 			exit(1);
 		}
-		//cout << "Pathh : " <<  pathh << endl;
 		char *hiddencheck = basename(pathh);
 		if(hiddencheck[0] == '.')
 			hidden = true;
