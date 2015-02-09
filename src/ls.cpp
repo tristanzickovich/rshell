@@ -67,12 +67,9 @@ void printa(const char *dirnm, bool listall){
 	bool hidden = false;
 	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
-		//char *path = filesvec.at(i);
-		//cout << "Path: " << path << endl;
 		char *path = new char[100];
 		strcpy(path, dirnm);
 		strcat(path, "/");
-		//fix if just . or ..,  remove those early / after stat #FIXME
 		strcat(path, filesvec.at(i));
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
@@ -179,13 +176,17 @@ void printl(const char *dirnm, bool listall){
 	cout << "total " << totalflag(listall) << endl;
 	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
-		char *path = filesvec.at(i);
+		char *path = new char[100];
+		strcpy(path, dirnm);
+		strcat(path, "/");
+		strcat(path, filesvec.at(i));
 		
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
 			exit(1);
 		}
-		if(path[0] == '.')
+		char *hiddencheck = basename(path);
+		if(hiddencheck[0] == '.')
 			hidden = true;
 		else
 			hidden = false;
@@ -255,21 +256,22 @@ void printl(const char *dirnm, bool listall){
 			//if file is a directory
 			if(S_ISDIR(sb.st_mode)){	
 				if(hidden)
-					cout << ' ' <<  bluegrey << path << normal << '/';
+					cout << ' ' <<  bluegrey << basename(path) << normal << '/';
 				else
-					cout << ' ' << blue << path << normal << '/';
+					cout << ' ' << blue << basename(path) << normal << '/';
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
-					cout << ' ' << greengrey << path << normal;
+					cout << ' ' << greengrey << basename(path) << normal;
 				else
-					cout << ' ' << green << path << normal;
+					cout << ' ' << green << basename(path) << normal;
 			}
 			else
-				cout << ' ' << path;
+				cout << ' ' << basename(path);
 
 			cout << endl;
 		}
+		delete [] path;
 		delete [] filesvec.at(i); //deletes mem allocated in alporder
 	}
 }
@@ -303,18 +305,18 @@ void printrRecursed(const char *dirnm, bool listall){
 					additionalpaths.push(p);
 				}
 				if(hidden)
-					cout <<  bluegrey << hlpr << normal << "/  "; 
+					cout <<  bluegrey << basename(hlpr) << normal << "/  "; 
 				else
-					cout << blue << hlpr << normal << "/  "; 
+					cout << blue << basename(hlpr) << normal << "/  "; 
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
-					cout << greengrey << hlpr << normal << "  ";
+					cout << greengrey << basename(hlpr) << normal << "  ";
 				else
-					cout << green << hlpr << normal << "  ";
+					cout << green << basename(hlpr) << normal << "  ";
 			}
 			else
-				cout << hlpr << "  " ;
+				cout << basename(hlpr) << "  " ;
 
 		}
 		delete [] filesvec.at(i); //alporder mem dealloc
@@ -337,13 +339,18 @@ void printr(const char *dirnm, bool listall){
 	cout << dirnm << ':' << endl;
 	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
-		char *path = filesvec.at(i);
-	
+		char *path = new char[100];
+		strcpy(path, dirnm);
+		strcat(path, "/");
+		strcat(path, filesvec.at(i));
+		
+		
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
 			exit(1);
 		}
-		if(path[0] == '.')
+		char *hiddencheck = basename(path);
+		if(hiddencheck[0] == '.')
 			hidden = true;
 		else
 			hidden = false;
@@ -355,18 +362,18 @@ void printr(const char *dirnm, bool listall){
 					additionalpaths.push(p);
 				}
 				if(hidden)
-					cout <<  bluegrey << path << normal << "/  "; 
+					cout <<  bluegrey << basename(path) << normal << "/  "; 
 				else
-					cout << blue << path << normal << "/  "; 
+					cout << blue << basename(path) << normal << "/  "; 
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
-					cout << greengrey << path << normal << "  ";
+					cout << greengrey << basename(path) << normal << "  ";
 				else
-					cout << green << path << normal << "  ";
+					cout << green << basename(path) << normal << "  ";
 			}
 			else
-				cout << path << "  " ;
+				cout << basename(path) << "  " ;
 
 		}
 		delete [] filesvec.at(i); //alporder mem dealloc
@@ -517,13 +524,18 @@ void printlr(const char *dirnm, bool listall){
 	cout << "total " << totalflag(listall) << endl;
 
 	for(unsigned i = 0; i < filesvec.size(); ++i){
-		char *path = filesvec.at(i);
-	
+		char *path = new char[100];
+		strcpy(path, dirnm);
+		strcat(path, "/");
+		strcat(path, filesvec.at(i));
+		
+		
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
 			exit(1);
 		}
-		if(path[0] == '.')
+		char *hiddencheck = basename(path);
+		if(hiddencheck[0] == '.')
 			hidden = true;
 		else
 			hidden = false;
@@ -601,21 +613,22 @@ void printlr(const char *dirnm, bool listall){
 			//if file is a directory
 			if(S_ISDIR(sb.st_mode)){	
 				if(hidden)
-					cout << ' ' <<  bluegrey << path << normal << '/';
+					cout << ' ' <<  bluegrey << basename(path) << normal << '/';
 				else
-					cout << ' ' << blue << path << normal << '/';
+					cout << ' ' << blue << basename(path) << normal << '/';
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
-					cout << ' ' << greengrey << path << normal;
+					cout << ' ' << greengrey << basename(path) << normal;
 				else
-					cout << ' ' << green << path << normal;
+					cout << ' ' << green << basename(path) << normal;
 			}
 			else
-				cout << ' ' << path;
+				cout << ' ' << basename(path);
 
 			cout << endl;
 		}
+		delete [] path;
 		delete [] filesvec.at(i); //alporder mem dealloc
 	}
 	while(!additionalpaths.empty()){
