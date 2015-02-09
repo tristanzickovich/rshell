@@ -87,18 +87,18 @@ void printa(const char *dirnm, bool listall){
 		if((!listall && !hidden) || listall){
 			if(S_ISDIR(sb.st_mode)){	
 				if(hidden)
-					cout <<  bluegrey << path << normal << "/  "; 
+					cout <<  bluegrey << basename(path) << normal << "/  "; 
 				else
-					cout << blue << path << normal << "/  "; 
+					cout << blue << basename(path) << normal << "/  "; 
 			}
 			else if(S_IXUSR & sb.st_mode){
 				if(hidden)
-					cout << greengrey << path << normal << "  ";
+					cout << greengrey << basename(path) << normal << "  ";
 				else
-					cout << green << path << normal << "  ";
+					cout << green << basename(path) << normal << "  ";
 			}
 			else
-				cout << path << "  " ;
+				cout << basename(path) << "  " ;
 		}
 		delete [] path; //added to delete mem assigned in alporder
 		delete [] filesvec.at(i);
