@@ -102,7 +102,7 @@ void printa(const char *dirnm, bool listall){
 	}
 	cout << endl;
 }
-
+/*
 // -l flag helper for total output
 int totalflag(bool listall){
 	int total = 0;
@@ -132,7 +132,7 @@ int totalflag(bool listall){
 	}
 	closedir(pdir);
 	return total/2;
-}
+}*/
 
 int totalflagr(const char *path, bool listall){
 	int total = 0;
@@ -173,7 +173,7 @@ int totalflagr(const char *path, bool listall){
 void printl(const char *dirnm, bool listall){
 	struct stat sb;
 	bool hidden = false;
-	cout << "total " << totalflag(listall) << endl;
+	cout << "total " << totalflagr(dirnm, listall) << endl;
 	vector<char *> filesvec = alporder(dirnm);
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *path = new char[100];
@@ -344,7 +344,6 @@ void printr(const char *dirnm, bool listall){
 		strcat(path, "/");
 		strcat(path, filesvec.at(i));
 		
-		
 		if(stat(path, &sb) == -1){
 			perror("Stat Error");
 			exit(1);
@@ -376,6 +375,7 @@ void printr(const char *dirnm, bool listall){
 				cout << basename(path) << "  " ;
 
 		}
+		delete [] path;
 		delete [] filesvec.at(i); //alporder mem dealloc
 	}
 	cout << endl;
@@ -518,10 +518,8 @@ void printlr(const char *dirnm, bool listall){
 	string case2 = "..";
 	queue<char *> additionalpaths;
 	cout << dirnm << ':' << endl;
-	//cout << "total " << totalflag(dirnm, listall) << endl;
 	vector<char *> filesvec = alporder(dirnm);
-	//char *pathh = filesvec.at(0);
-	cout << "total " << totalflag(listall) << endl;
+	cout << "total " << totalflagr(dirnm, listall) << endl;
 
 	for(unsigned i = 0; i < filesvec.size(); ++i){
 		char *path = new char[100];
