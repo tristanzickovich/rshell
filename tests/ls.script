@@ -7177,6 +7177,32 @@ tzick002@hammer $ bin/ls -f -q -e -p - p[K[Kp -p -p -p -p
 tzick002@hammer $ bin/ls - p
 Can't open directory: No such file or directory
 ~/Documents/rshell
+tzick002@hammer $ bin/ls                           -a                          -l^M
+total 68^M
+drwx------ 6 tzick002 csmajs    4096 Feb  8 21:46 ^[[1;47;34m.^[[0;00m/^M
+drwx------ 8 tzick002 csmajs    4096 Feb  8 18:55 ^[[1;47;34m..^[[0;00m/^M
+drwx------ 8 tzick002 csmajs    4096 Feb  8 21:49 ^[[1;47;34m.git^[[0;00m/^M
+drwx------ 2 tzick002 csmajs    4096 Feb  8 21:52 ^[[1;34mbin^[[0;00m/^M
+-rw------- 1 tzick002 csmajs   35122 Jan 16 16:30 LICENSE^M
+-rw------- 1 tzick002 csmajs     327 Feb  3 19:05 Makefile^M
+-rw------- 1 tzick002 csmajs    1925 Feb  8 21:46 README.md^M
+drwx------ 3 tzick002 csmajs    4096 Feb  8 20:40 ^[[1;34msrc^[[0;00m/^M
+drwx------ 3 tzick002 csmajs    4096 Feb  8 21:52 ^[[1;34mtests^[[0;00m/^M
+~/Documents/rshell^M^M
+tzick002@hammer $ bin/ls                              -a                      -l                         tests^M
+total 460^M
+drwx------ 3 tzick002 csmajs    4096 Feb  8 21:52 ^[[1;47;34m.^[[0;00m/^M
+drwx------ 6 tzick002 csmajs    4096 Feb  8 21:46 ^[[1;47;34m..^[[0;00m/^M
+drwx------ 3 tzick002 csmajs    4096 Feb  3 19:40 ^[[1;34ma^[[0;00m/^M
+-rw------- 1 tzick002 csmajs    6938 Jan 27 22:05 exec.script^M
+-rw------- 1 tzick002 csmajs       0 Feb  8 21:52 extra.script^M
+-rw------- 1 tzick002 csmajs  443338 Feb  8 21:25 ls.script^M
+~/Documents/rshell^M^M
+tzick002@hammer $ bin/ls             -aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa .                     ..^M
+^[[1;47;34m.^[[0;00m/  ^[[1;47;34m..^[[0;00m/  ^[[1;47;34m.git^[[0;00m/  ^[[1;34mbin^[[0;00m/  LICENSE  Makefile  README.md  ^[[1;34msrc    ^[[0;00m/  ^[[1;34mtests^[[0;00m/  ^M
+^[[1;47;34m.^[[0;00m/  ^[[1;47;34m..^[[0;00m/  ^[[1;34mfirstrepo^[[0;00m/  ^[[1;34mgitlearn^[[0;00m/  ^[[1;34mrshell^[[0;00m/  ^[[1;34mu    cr-cs100^[[0;00m/  ^[[1;34mucr-cs100_old^[[0;00m/  ^[[1;34mucr-cs100_old_old^[[0;00m/  ^M
+~/Documents/rshell^M^M
+tzick002@hammer $ #white space will be ignored^M
 tzick002@hammer $ #- must be attached to flag or it will be read as file
 ~/Documents/rshell
 tzick002@hammer $ #testing file functionality
