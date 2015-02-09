@@ -46,7 +46,12 @@ space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 
 ##Use:
 * Run executable with flags: `-a`, `-l`, `-R`, or any combo
+* Combos of flags can be listed as a single flag. Ex. `-al`, `-Rla`, ... etc.
 * Unknown flags and duplicate flags will be ignored
+* Bin/ls can be called on specific files, if you wish to use flags as well, 
+	the flags must be called first. Ex. `bin/ls -a filename`
+* Multiple files can be specified, each will be executed in sequence of which was typed first.
+	They will be output one after another. 
 * Directories will be printed in blue, executables in green,
 	and hidden files with a grey background (colored text and background
 	will be combined where applicable).
