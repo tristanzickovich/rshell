@@ -7383,6 +7383,34 @@ Can't open directory: No such file or directory
 tzick002@hammer $ bin/ls junik junk tests
 Can't open directory: No such file or directory
 ~/Documents/rshell
+ tzick002@hammer $ bin/ls -a .git . ..^M
+  14 ^[[1;47;34m.^[[0;00m/  ^[[1;47;34m..^[[0;00m/  ^[[1;34mbranches^[[0;00m/  COMMIT_EDITMSG  COMMIT_EDITMSG~  config  description  FETCH_HE    AD  HEAD  ^[[1;34mhooks^[[0;00m/  index  ^[[1;34minfo^[[0;00m/  ^[[1;34mlogs^[[0;00m/  ^[[1;34mobjects^[[0;00m/  ORIG_HEAD  packed-refs      ^[[1;34mrefs^[[0;00m/  ^M
+   15 ^[[1;47;34m.^[[0;00m/  ^[[1;47;34m..^[[0;00m/  ^[[1;47;34m.git^[[0;00m/  ^[[1;34mbin^[[0;00m/  LICENSE  Makefile  README.md  ^[[1;34msrc    ^[[0;00m/  ^[[1;34mtests^[[0;00m/  ^M
+    16 ^[[1;47;34m.^[[0;00m/  ^[[1;47;34m..^[[0;00m/  ^[[1;34mfirstrepo^[[0;00m/  ^[[1;34mgitlearn^[[0;00m/  ^[[1;34mrshell^[[0;00m/  ^[[1;34mu    cr-cs100^[[0;00m/  ^[[1;34mucr-cs100_old^[[0;00m/  ^[[1;34mucr-cs100_old_old^[[0;00m/  ^M
+     17 ~/Documents/rshell^M^M
+	 18 tzick002@hammer $ bin/ls -a /^H^[[K.git/.^M
+	  19 ^[[1;47;34m.^[[0;00m/  ^[[1;47;34m..^[[0;00m/  ^[[1;34mbranches^[[0;00m/  COMMIT_EDITMSG  COMMIT_EDITMSG~  config  description  FETCH_HE    AD  HEAD  ^[[1;34mhooks^[[0;00m/  index  ^[[1;34minfo^[[0;00m/  ^[[1;34mlogs^[[0;00m/  ^[[1;34mobjects^[[0;00m/  ORIG_HEAD  packed-refs      ^[[1;34mrefs^[[0;00m/  ^M
+~/Documents/rshell^M^M
+tzick002@hammer $ #^H^[[K^M
+~/Documents/rshell^M^M
+tzick002@hammer $ #^H^[[Kbin^H^[[K^H^[[K^H^[[K^G# ^H^[[Khidden files are passed and and handles^H^[[K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[    K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[K^H^[[Ked in and handled^M
+~/Documents/rshell^M^M
+tzick002@hammer $ bin/ls^M
+^[[1;34mbin^[[0;00m/  LICENSE  Makefile  README.md  ^[[1;34msrc^[[0;00m/  ^[[1;34mtests^[[0;00m/  ^M
+~/Documents/rshell^M^M
+tzick002@hammer $ bin/ls LICENSE ^M
+Can't open directory: Not a directory^M
+~/Documents/rshell^M^M
+tzick002@hammer $ #handles not directory files passed in accordingly^M
+~/Documents/rshell^M^M
+tzick002@hammer $ bin/ls Makefile ^M
+Can't open directory: Not a directory^M
+~/Documents/rshell^M^M
+tzick002@hammer $ bin/ls Makefile Read^H^[[K^H^[[KE^H^[[KE^H^[[K^H^[[KEADME.md^M
+Can't open directory: Not a directory^M
+~/Documents/rshell^M^M
+tzick002@hammer $ #will exit if not a dr^H^[[Kirectory^M
+~/Documents/rshell^M^M
 tzick002@hammer $ #invalid fin[Klenames call an error and exit the program
 ~/Documents/rshell
 tzick002@hammer $ #multiple files with flags testing

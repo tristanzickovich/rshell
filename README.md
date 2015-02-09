@@ -53,6 +53,7 @@ space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 * Multiple files can be specified, each will be executed in sequence of which was typed first.
 	They will be output one after another. 
 * Bad file names will cause the program to exit (therefore files listed after bad file will not be attended to). 
+* Files specified that are not directories will prompt that it is not a directory and will exit the program.
 * Flags with multiple files will be applied to all files specified
 * Directories will be printed in blue, executables in green,
 	and hidden files with a grey background (colored text and background
