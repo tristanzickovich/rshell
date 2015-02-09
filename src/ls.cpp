@@ -52,13 +52,20 @@ vector<char *> alporder(const char* start){
 
 	dirent *direntp;
 	while((direntp = readdir(pdir))){
+		if(direntp == NULL){
+			perror("Error With Read");
+			exit(1);
+		}
 		char *c = new char[strlen(direntp->d_name) + 1];
 		strcpy(c, direntp->d_name);
 		newvec.push_back(c);
 	}
 	sort(newvec.begin(), newvec.end(), NoCaseLess);
 	
-	closedir(pdir);
+	if(-1 == closedir(pdir)){
+		perror("Error Closing");
+		exit(1);
+	}
 	return newvec;
 }
 
@@ -114,6 +121,10 @@ int totalflagr(const char *path, bool listall){
 	bool hidden = false;
 	dirent *direntp;
 	while((direntp = readdir(pdir))){
+		if(direntp == NULL){
+			perror("Error With Read");
+			exit(1);
+		}
 		string pathhs = (string)path + '/' + direntp->d_name;
 		char *pathh = (char *)pathhs.c_str();
 
@@ -131,7 +142,10 @@ int totalflagr(const char *path, bool listall){
 			total += sb.st_blocks;
 		}
 	}
-	closedir(pdir);
+	if(-1 == closedir(pdir)){
+		perror("Error Closing");
+		exit(1);
+	}
 	return total/2;
 }
 
@@ -159,9 +173,17 @@ void printl(const char *dirnm, bool listall){
 		if((!listall && !hidden) || listall){
 			//set owner of item to ownr
 			struct passwd *pass = getpwuid(sb.st_uid);
+			if(pass == NULL){
+				perror("Getpwuid Error");
+				exit(1);
+			}
 			char *ownr = pass->pw_name;	
 			//set group owner to gownr
 			struct group *grp = getgrgid(sb.st_gid);
+			if(grp == NULL){
+				perror("Getgrgid Error");
+				exit(1);
+			}
 			char *gownr = grp->gr_name; 
 			//output permissions line
 			if(S_ISDIR(sb.st_mode))
@@ -388,9 +410,17 @@ void printlrRecursed(const char *dirnm, bool listall){
 
 			//set owner of item to ownr
 			struct passwd *pass = getpwuid(sb.st_uid);
+			if(pass == NULL){
+				perror("Getpwuid Error");
+				exit(1);
+			}
 			char *ownr = pass->pw_name;	
 			//set group owner to gownr
 			struct group *grp = getgrgid(sb.st_gid);
+			if(grp == NULL){
+				perror("Getgrgid Error");
+				exit(1);
+			}
 			char *gownr = grp->gr_name; 
 			//output permissions line
 			if(S_ISDIR(sb.st_mode))
@@ -514,9 +544,17 @@ void printlr(const char *dirnm, bool listall){
 
 			//set owner of item to ownr
 			struct passwd *pass = getpwuid(sb.st_uid);
+			if(pass == NULL){
+				perror("Getpwuid Error");
+				exit(1);
+			}
 			char *ownr = pass->pw_name;	
 			//set group owner to gownr
 			struct group *grp = getgrgid(sb.st_gid);
+			if(grp == NULL){
+				perror("Getgrgid Error");
+				exit(1);
+			}
 			char *gownr = grp->gr_name; 
 			//output permissions line
 			if(S_ISDIR(sb.st_mode))

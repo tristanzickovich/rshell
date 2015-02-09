@@ -71,11 +71,11 @@ int execute(string commands){
 		cout << "char array: " << argchar[i] << endl;
 	} */
 	int pid = fork();
-	//if(pid == -1){
-	//	perror("Error with fork()");
-	//	exit(1);
-	//}
-	if(pid == 0){
+	if(pid == -1){
+		perror("Error with fork()");
+		exit(1);
+	}
+	else if(pid == 0){
 		execvp(argchar[0], argchar);
 		perror("Exec failed");
 		exit(1);
@@ -83,7 +83,7 @@ int execute(string commands){
 	else if(pid != 0){
 		while(wait(&var) != pid)
 			perror("Error with wait()");
-
+		
 		return var;
 	}
 	return -1;
@@ -124,9 +124,16 @@ string specialspacing(string fixer){
 void runterminal(){
 	vector<string> cmdline;
 	struct passwd *pass = getpwuid(getuid());
+	if(pass == NULL){
+		perror("Getpwuid Error");
+		exit(1);
+	}
 	char *curuser = pass->pw_name;
 	char charhost[100];
-	gethostname(charhost, sizeof charhost);
+	if(-1 == gethostname(charhost, sizeof charhost)){
+		perror("Gethostname Error");
+		exit(1);
+	}
 	string curhost = charhost;	
 	if(curhost.find('.') != std::string::npos)
 		curhost.resize(curhost.find('.'));
