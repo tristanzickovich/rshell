@@ -77,8 +77,13 @@ int execute(string commands){
 	else if(pid != 0){
 		while(wait(&var) != pid)
 			perror("Error with wait()");
+		for(unsigned i = 0; i <  charvec.size(); ++i)
+			delete [] charvec.at(i);
 		return var;
 	}
+	for(unsigned i = 0; i <  charvec.size(); ++i)
+			delete [] charvec.at(i);
+
 	return -1;
 }
 
@@ -165,7 +170,6 @@ int main(){
 			int lastcmd = 0;
 		
 			for(unsigned i = 0; i < cmdline.size(); ++i){
-				//cout << "execme: " << execme << endl;
 				//if first command is && or ||, do nothing
 				if(execme == "" && (cmdline.at(i) == "&&" || cmdline.at(i) == "||"));
 
