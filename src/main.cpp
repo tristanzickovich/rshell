@@ -115,6 +115,45 @@ string specialspacing(string fixer){
 				fixer.insert(i-1, " ");
 			}
 		}
+		else if(fixer.at(i) == '<'){
+			if(i+1 < fixer.size() && fixer.at(i+1) != ' '){
+				fixer.insert(i+1, " ");
+			}
+			if(fixer.at(i-1) != ' '){
+				fixer.insert(i, " ");
+			}
+		}
+		else if(fixer.at(i) == '>'){
+			if(i+1 < fixer.size() && fixer.at(i+1) == '>'){
+				if(i+2 < fixer.size() && fixer.at(i+2) != ' '){
+					fixer.insert(i+2, " ");
+				}
+				if(fixer.at(i-1) != ' '){
+					fixer.insert(i, " ");
+				}
+			}
+			if(i+1 < fixer.size() && fixer.at(i+1) != '>' && fixer.at(i-1) != '>'){
+				if(fixer.at(i+1) != ' '){
+					fixer.insert(i+1, " ");
+				}
+				if(fixer.at(i-1) != ' '){
+					fixer.insert(i, " ");
+				}
+			}
+			if(fixer.at(i-1) != ' ' && fixer.at(i-1) != '>'){
+				fixer.insert(i, " ");
+			}
+		}
+		else if(fixer.at(i) == '|'){
+			if(i+1 < fixer.size() && fixer.at(i+1) != '|' && fixer.at(i-1) != '|'){
+				if(fixer.at(i+1) != ' '){
+					fixer.insert(i+1, " ");
+				}
+				if(fixer.at(i-1) != ' '){
+					fixer.insert(i, " ");
+				}
+			}
+		}
 	}
 	return fixer;
 }
@@ -157,7 +196,8 @@ int main(){
 		//if any commands exist (other than spaces or comments) process commands
 		if(command.size() > 0){
 			command = specialspacing(command);
-			//cout << "command: " << command << endl;
+			cout << "command: " << command << endl;
+			return 0; //take out after test
 			command.c_str();
 			//split command line by spaces and tabs and push into cmdline vector
 			boost::split(cmdline, command, boost::is_any_of(" , \t"),	
