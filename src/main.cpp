@@ -58,18 +58,12 @@ int execute(string commands){
 		if(getready.at(0) == "exit" || getready.at(0) == "EXIT"){
 			exit(1);
 		}
-		/*for(int i = 0; i < getready.size(); ++i){
-			cout << getready.at(i) << endl;
-		} */
 	}
 	vector<char*> charvec = convertvec(getready);	
 	char *argchar[300]; 
 	for(unsigned i = 0; i < charvec.size(); ++i){
 		argchar[i] = charvec.at(i);
 	}
-	/*for(int i = 0; argchar[i] != '\0'; ++i){
-		cout << "char array: " << argchar[i] << endl;
-	} */
 	int pid = fork();
 	if(pid == -1){
 		perror("Error with fork()");
@@ -120,7 +114,7 @@ string specialspacing(string fixer){
 	return fixer;
 }
 
-void runterminal(){
+int main(){
 	vector<string> cmdline;
 	struct passwd *pass = getpwuid(getuid());
 	if(pass == NULL){
@@ -146,7 +140,7 @@ void runterminal(){
 
 		if(cin.fail()){
 			cout << "exiting" << endl;
-			return;
+			return 0;
 		}
 
 		//if comment, disregard everything following it
@@ -221,21 +215,7 @@ void runterminal(){
 					execme.append(" ");
 				}
 			}
-	/*		//if there are unexecuted commands after loop ends, execute them
-			if(execme != ""){
-				if(passed && lastcmd != 2){
-					execute(execme);
-				}
-				else if(!passed && lastcmd == 2){
-					execute(execme);
-				}
-				execme = "";
-			} */
 		}
 	}	
+	return 0;
 }	
-
-int main(){
-	runterminal();	
-	return 1;
-}
