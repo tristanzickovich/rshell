@@ -2,7 +2,9 @@
 #include <cstring>
 #include <vector>
 #include <string>
+#include <string.h>
 #include <boost/algorithm/string.hpp>
+#include <errno.h>
 #include <unistd.h>
 #include <cstdio>
 #include <stdlib.h>
@@ -53,7 +55,8 @@ vector<char*> convertvec(vector<string> conv){
 
 int inR(string left, string right){
 	int var;
-	
+	right = cleanup(right);
+	left = cleanup(left);
 	vector<string> getready;
 	left.c_str();
 	boost::split(getready, left, boost::is_any_of(" "),	
@@ -64,14 +67,15 @@ int inR(string left, string right){
 	for(unsigned i = 0; i < charvec.size(); ++i){
 		argchar[i] = charvec.at(i);
 	}
-	int pid = fork();
-	int returnstd = dup(0);
 	int fdi = open(right.c_str(), O_RDONLY);
 	if(fdi == -1){
 		perror("Open Error");
 		exit(1);
 	}
-	if(pid == -1){
+	int returnstd = dup(0);
+
+	int pid = fork();
+		if(pid == -1){
 		perror("Error with fork()");
 		exit(1);
 	}
@@ -111,11 +115,8 @@ int inR(string left, string right){
 
 int outR(string left, string right){
 	int var;
-	int fdo = open(right.c_str(), O_RDWR|O_CREAT|O_TRUNC, 0644);
-	if(fdo == -1){
-		perror("Open Error");
-		exit(1);
-	}
+	right = cleanup(right);
+	left = cleanup(left);
 	vector<string> getready;
 	left.c_str();
 	boost::split(getready, left, boost::is_any_of(" "),	
@@ -126,7 +127,13 @@ int outR(string left, string right){
 	for(unsigned i = 0; i < charvec.size(); ++i){
 		argchar[i] = charvec.at(i);
 	}
+	int fdo = open(right.c_str(), O_RDWR|O_CREAT|O_TRUNC, 0644);
+	if(fdo == -1){
+		perror("Open Error");
+		exit(1);
+	}
 	int returnstd = dup(1);
+
 	int pid = fork();
 	if(pid == -1){
 		perror("Error with fork()");
