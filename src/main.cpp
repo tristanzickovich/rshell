@@ -5,6 +5,8 @@
 #include <boost/algorithm/string.hpp>
 #include <unistd.h>
 #include <cstdio>
+#include <stdlib.h>
+#include <limits.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -51,11 +53,7 @@ vector<char*> convertvec(vector<string> conv){
 
 int inR(string left, string right){
 	int var;
-	int fdi = open(right.c_str(), O_RDONLY);
-	if(fdi == -1){
-		perror("Open Error");
-		exit(1);
-	}
+	
 	vector<string> getready;
 	left.c_str();
 	boost::split(getready, left, boost::is_any_of(" "),	
@@ -67,6 +65,12 @@ int inR(string left, string right){
 		argchar[i] = charvec.at(i);
 	}
 	int pid = fork();
+	int returnstd = dup(0);
+	int fdi = open(right.c_str(), O_RDONLY);
+	if(fdi == -1){
+		perror("Open Error");
+		exit(1);
+	}
 	if(pid == -1){
 		perror("Error with fork()");
 		exit(1);
@@ -87,6 +91,71 @@ int inR(string left, string right){
 	else if(pid != 0){
 		while(wait(&var) != pid)
 			perror("Error with wait()");
+		if(-1 == close(fdi)){
+			perror("Close Error");
+			exit(1);
+		}
+		if(-1 == dup(returnstd)){
+			perror("Dup Error");
+			exit(1);
+		}
+		for(unsigned i = 0; i <  charvec.size(); ++i)
+			delete [] charvec.at(i);
+		return var;
+	}
+	for(unsigned i = 0; i <  charvec.size(); ++i)
+			delete [] charvec.at(i);
+
+	return -1;
+}
+
+int outR(string left, string right){
+	int var;
+	int fdo = open(right.c_str(), O_RDWR|O_CREAT|O_TRUNC, 0644);
+	if(fdo == -1){
+		perror("Open Error");
+		exit(1);
+	}
+	vector<string> getready;
+	left.c_str();
+	boost::split(getready, left, boost::is_any_of(" "),	
+			  boost::token_compress_on);
+
+	vector<char*> charvec = convertvec(getready);	
+	char *argchar[300]; 
+	for(unsigned i = 0; i < charvec.size(); ++i){
+		argchar[i] = charvec.at(i);
+	}
+	int returnstd = dup(1);
+	int pid = fork();
+	if(pid == -1){
+		perror("Error with fork()");
+		exit(1);
+	}
+	else if(pid == 0){
+		if(-1 == close(1)){
+			perror("Close Error");
+			exit(1);
+		}
+		if(-1 == dup(fdo)){
+			perror("Dup Error");
+			exit(1);
+		}
+		execvp(argchar[0], argchar);
+		perror("Exec failed");
+		exit(1);
+	}
+	else if(pid != 0){
+		while(wait(&var) != pid)
+			perror("Error with wait()");
+		if(-1 == close(fdo)){
+			perror("Close Error");
+			exit(1);
+		}
+		if(-1 == dup(returnstd)){
+			perror("Dup Error");
+			exit(1);
+		}
 		for(unsigned i = 0; i <  charvec.size(); ++i)
 			delete [] charvec.at(i);
 		return var;
@@ -112,7 +181,12 @@ int execRedirection(vector<string> cmds){
 					lastexecme = execme;
 			}
 			else if(lastcmd == 1){
-
+				if(lastexecme != ""){
+					outR(lastexecme, execme);
+					lastexecme = "";
+				}
+				else
+					lastexecme = execme;
 			}
 			else if(lastcmd == 2){
 
