@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <pwd.h>
 #include <sys/types.h>
 
@@ -47,6 +49,97 @@ vector<char*> convertvec(vector<string> conv){
 	return charvec;
 }
 
+int inR(string left, string right){
+	int var;
+	int fdi = open(right.c_str(), O_RDONLY);
+	if(fdi == -1){
+		perror("Open Error");
+		exit(1);
+	}
+	vector<string> getready;
+	left.c_str();
+	boost::split(getready, left, boost::is_any_of(" "),	
+			  boost::token_compress_on);
+
+	vector<char*> charvec = convertvec(getready);	
+	char *argchar[300]; 
+	for(unsigned i = 0; i < charvec.size(); ++i){
+		argchar[i] = charvec.at(i);
+	}
+	int pid = fork();
+	if(pid == -1){
+		perror("Error with fork()");
+		exit(1);
+	}
+	else if(pid == 0){
+		if(-1 == close(0)){
+			perror("Close Error");
+			exit(1);
+		}
+		if(-1 == dup(fdi)){
+			perror("Dup Error");
+			exit(1);
+		}
+		execvp(argchar[0], argchar);
+		perror("Exec failed");
+		exit(1);
+	}
+	else if(pid != 0){
+		while(wait(&var) != pid)
+			perror("Error with wait()");
+		for(unsigned i = 0; i <  charvec.size(); ++i)
+			delete [] charvec.at(i);
+		return var;
+	}
+	for(unsigned i = 0; i <  charvec.size(); ++i)
+			delete [] charvec.at(i);
+
+	return -1;
+}
+
+int execRedirection(vector<string> cmds){
+	cmds.push_back(";");
+	string execme = "", lastexecme = "";
+	int lastcmd = 0;
+	for(unsigned i = 0; i < cmds.size(); ++i){
+		if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "|" || cmds.at(i) == ";"){
+			if(lastcmd == 0){
+				if(lastexecme != ""){
+					inR(lastexecme, execme);
+					lastexecme = "";
+				}
+				else
+					lastexecme = execme;
+			}
+			else if(lastcmd == 1){
+
+			}
+			else if(lastcmd == 2){
+
+			}
+			else if(lastcmd == 3){
+
+			}
+			if(cmds.at(i) == "<")
+				lastcmd = 0;
+			else if(cmds.at(i) == ">")
+				lastcmd = 1;
+			else if(cmds.at(i) == ">>")
+				lastcmd = 2;
+			else if(cmds.at(i) == "|")
+				lastcmd = 3;
+			else
+				break;
+			execme = "";		
+		}
+		else{
+			execme.append(cmds.at(i));
+			execme.append(" ");
+		}
+	}
+	return 0;
+}
+
 int execute(string commands){
 	vector<string> getready;
 	commands = cleanup(commands);	
@@ -57,6 +150,12 @@ int execute(string commands){
 			  boost::token_compress_on);
 		if(getready.at(0) == "exit" || getready.at(0) == "EXIT"){
 			exit(1);
+		}
+	}
+	for(unsigned i = 0; i < getready.size(); ++i){
+		if(getready.at(i) == "|" || getready.at(i) == "<" || getready.at(i) == ">"
+							|| getready.at(i) == ">>"){
+			return execRedirection(getready);
 		}
 	}
 	vector<char*> charvec = convertvec(getready);	
@@ -196,8 +295,6 @@ int main(){
 		//if any commands exist (other than spaces or comments) process commands
 		if(command.size() > 0){
 			command = specialspacing(command);
-			cout << "command: " << command << endl;
-			return 0; //take out after test
 			command.c_str();
 			//split command line by spaces and tabs and push into cmdline vector
 			boost::split(cmdline, command, boost::is_any_of(" , \t"),	
