@@ -66,7 +66,6 @@ int execredir(string left, string right, int dupval, int ID){
 	left.c_str();
 	boost::split(getready, left, boost::is_any_of(" "),	
 			  boost::token_compress_on);
-	//std::reverse(getready.begin(), getready.end());
 	vector<char*> charvec = convertvec(getready);	
 	char *argchar[300]; 
 	for(unsigned i = 0; i < charvec.size(); ++i){
@@ -85,6 +84,10 @@ int execredir(string left, string right, int dupval, int ID){
 		exit(1);
 	}
 	int returnstd = dup(dupval);
+	if(returnstd == -1){
+		perror("Dup Error");
+		exit(1);
+	}
 
 	int pid = fork();
 	if(pid == -1){
@@ -125,6 +128,101 @@ int execredir(string left, string right, int dupval, int ID){
 	return -1;
 }
 
+int execredir2(string left, string middle, string right){
+	int var;
+	right = cleanup(right);
+	middle = cleanup(middle);
+	left = cleanup(left);
+	vector<string> getready;
+	left.c_str();
+	boost::split(getready, left, boost::is_any_of(" "),	
+			  boost::token_compress_on);
+	vector<char*> charvec = convertvec(getready);	
+	char *argchar[300]; 
+	for(unsigned i = 0; i < charvec.size(); ++i){
+		argchar[i] = charvec.at(i);
+	}
+	int fd1 = open(right.c_str(), outlist); 
+	if(fd1 == -1){
+		perror("Open Error");
+		exit(1);
+	}	
+	int fd2 = open(middle.c_str(), O_RDONLY); 
+	if(fd2 == -1){
+		perror("Open Error");
+		exit(1);
+	}
+
+	int returnstdin = dup(0);
+	if(returnstdin == -1){
+		perror("Dup Error");
+		exit(1);
+	}
+
+	int returnstdout = dup(1);
+	if(returnstdout == -1){
+		perror("Dup Error");
+		exit(1);
+	}
+
+	int pid = fork();
+	if(pid == -1){
+		perror("Error with fork()");
+		exit(1);
+	}
+	else if(pid == 0){
+		if(-1 == close(1)){
+			perror("Close Error");
+			exit(1);
+		}
+		if(-1 == dup(fd1)){
+			perror("Dup Error");
+			exit(1);
+		}
+		if(-1 == close(0)){
+			perror("Close Error");
+			exit(1);
+		}
+		if(-1 == dup(fd2)){
+			perror("Dup Error");
+			exit(1);
+		}
+		
+		execvp(argchar[0], argchar);
+		perror("Exec failed");
+		exit(1);
+	}
+	else if(pid != 0){
+		while(wait(&var) != pid)
+			perror("Error with wait()");
+		if(-1 == close(fd1)){
+			perror("Close Error");
+			exit(1);
+		}
+		if(-1 == dup(returnstdout)){
+			perror("Dup Error");
+			exit(1);
+		}
+		if(-1 == close(fd2)){
+			perror("Close Error");
+			exit(1);
+		}
+		if(-1 == dup(returnstdin)){
+			perror("Dup Error");
+			exit(1);
+		}
+
+		for(unsigned i = 0; i <  charvec.size(); ++i)
+			delete [] charvec.at(i);
+		return var;
+	}
+	for(unsigned i = 0; i <  charvec.size(); ++i)
+			delete [] charvec.at(i);
+
+	return -1;
+
+}
+
 int execRedirection(vector<string> cmds){
 	bool indetect = false, outdetect = false, appenddetect = false, pipedetect = false;
 	for(unsigned i = 0; i < cmds.size(); ++i){
@@ -138,8 +236,52 @@ int execRedirection(vector<string> cmds){
 			pipedetect = true;
 	}	
 	if(indetect && (outdetect || appenddetect)){
-		cout << "fixme" << endl;
-		//FIXME
+		unsigned inn = 0, outt = 0, appendd = 0;
+		cmds.push_back(";");
+		string execme = "", lastexecme = "", midexecme = "";
+		for(unsigned i = 0; i < cmds.size(); ++i){
+			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == ";"){
+				if(lastexecme != ""){
+					execredir2(lastexecme, midexecme, execme);
+					lastexecme = "";
+				}
+				else if(midexecme != ""){
+					lastexecme = midexecme;
+					midexecme = execme;
+				}
+				else
+					midexecme = execme;
+				if(cmds.at(i) == "<"){
+					if(inn == 1){
+						cerr << "Error: Only one '<' allowed." << endl;
+						break;
+					}
+					++inn;
+				}
+				else if(cmds.at(i) == ">"){
+					if(outt == 1 || appendd == 1){
+						cerr << "Error: Only one '>' or '>>' allowed." << endl;
+						break;
+					}
+					++outt;
+				}
+				else if(cmds.at(i) == ">>"){
+					if(outt == 1 || appendd == 1){
+						cerr << "Error: Only one '>' or '>>' allowed." << endl;
+						break;
+					}
+					++appendd;
+				}
+				else
+					break;
+				execme = "";		
+			}
+			else{
+				execme.append(cmds.at(i));
+				execme.append(" ");
+			}
+		}
+
 	}
 	else if(indetect || outdetect || appenddetect){
 		unsigned inn = 0, outt = 0, appendd = 0;
@@ -175,7 +317,7 @@ int execRedirection(vector<string> cmds){
 				if(cmds.at(i) == "<"){
 					lastcmd = 0;
 					if(inn == 1){
-						cerr << "Error: Only one '<' allowed" << endl;
+						cerr << "Error: Only one '<' allowed. Only first was executed." << endl;
 						break;
 					}
 					++inn;
@@ -183,7 +325,7 @@ int execRedirection(vector<string> cmds){
 				else if(cmds.at(i) == ">"){
 					lastcmd = 1;
 					if(outt == 1 || appendd == 1){
-						cerr << "Error: Only one '>' or '>>' allowed" << endl;
+						cerr << "Error: Only one '>' or '>>' allowed. Only first was executed." << endl;
 						break;
 					}
 					++outt;
@@ -191,7 +333,7 @@ int execRedirection(vector<string> cmds){
 				else if(cmds.at(i) == ">>"){
 					lastcmd = 2;
 					if(outt == 1 || appendd == 1){
-						cerr << "Error: Only one '>' or '>>' allowed" << endl;
+						cerr << "Error: Only one '>' or '>>' allowed. Only first was executed." << endl;
 						break;
 					}
 					++appendd;
