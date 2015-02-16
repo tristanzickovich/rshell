@@ -431,6 +431,15 @@ string specialspacing(string fixer){
 				fixer.insert(i-1, " ");
 			}
 		}
+		else if(fixer.at(i) == '<' && (i+2 < fixer.size() && fixer.at(i+2) == '<' && fixer.at(i+1) == '<')){
+			if(i+3 < fixer.size() && fixer.at(i+3) != ' ')
+				fixer.insert(i+3, " ");
+			if(fixer.at(i-1) != ' '){
+				fixer.insert(i, " ");
+				++i;
+			}
+			i += 2;
+		}
 		else if(fixer.at(i) == '<'){
 			if(i+1 < fixer.size() && fixer.at(i+1) != ' '){
 				fixer.insert(i+1, " ");
