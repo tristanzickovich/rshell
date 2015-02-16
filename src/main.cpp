@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <pwd.h>
 #include <sys/types.h>
+#include <algorithm>
 
 #define outlist O_RDWR|O_CREAT|O_TRUNC, 0644
 #define inlist O_RDONLY
@@ -65,7 +66,7 @@ int execredir(string left, string right, int dupval, int ID){
 	left.c_str();
 	boost::split(getready, left, boost::is_any_of(" "),	
 			  boost::token_compress_on);
-
+	//std::reverse(getready.begin(), getready.end());
 	vector<char*> charvec = convertvec(getready);	
 	char *argchar[300]; 
 	for(unsigned i = 0; i < charvec.size(); ++i){
@@ -125,53 +126,84 @@ int execredir(string left, string right, int dupval, int ID){
 }
 
 int execRedirection(vector<string> cmds){
-	cmds.push_back(";");
-	string execme = "", lastexecme = "";
-	int lastcmd = 0;
+	bool indetect = false, outdetect = false, appenddetect = false, pipedetect = false;
 	for(unsigned i = 0; i < cmds.size(); ++i){
-		if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "|" || cmds.at(i) == ";"){
-			if(lastcmd == 0){
-				if(lastexecme != ""){
-					execredir(lastexecme, execme, 0, 0);
-					lastexecme = "";
+		if(cmds.at(i) == "<")
+			indetect = true;
+		if(cmds.at(i) == ">")
+			outdetect = true;
+		if(cmds.at(i) == ">>")
+			appenddetect = true;
+		if(cmds.at(i) == "|")
+			pipedetect = true;
+	}	
+	if(indetect && (outdetect || appenddetect)){
+		cout << "fixme" << endl;
+		//FIXME
+	}
+	else if(indetect || outdetect || appenddetect){
+		unsigned inn = 0, outt = 0, appendd = 0;
+		cmds.push_back(";");
+		string execme = "", lastexecme = "";
+		int lastcmd = 0;
+		for(unsigned i = 0; i < cmds.size(); ++i){
+			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == ";"){
+				if(lastcmd == 0){
+					if(lastexecme != ""){
+						execredir(lastexecme, execme, 0, 0);
+						lastexecme = "";
+					}
+					else
+						lastexecme = execme;
+				}
+				else if(lastcmd == 1){
+					if(lastexecme != ""){
+						execredir(lastexecme, execme, 1, 1);
+						lastexecme = "";
+					}
+					else
+						lastexecme = execme;
+				}
+				else if(lastcmd == 2){
+					if(lastexecme != ""){
+						execredir(lastexecme, execme, 1, 2);
+						lastexecme = "";
+					}
+					else
+						lastexecme = execme;
+				}
+				if(cmds.at(i) == "<"){
+					lastcmd = 0;
+					if(inn == 1){
+						cerr << "Error: Only one '<' allowed" << endl;
+						break;
+					}
+					++inn;
+				}
+				else if(cmds.at(i) == ">"){
+					lastcmd = 1;
+					if(outt == 1 || appendd == 1){
+						cerr << "Error: Only one '>' or '>>' allowed" << endl;
+						break;
+					}
+					++outt;
+				}
+				else if(cmds.at(i) == ">>"){
+					lastcmd = 2;
+					if(outt == 1 || appendd == 1){
+						cerr << "Error: Only one '>' or '>>' allowed" << endl;
+						break;
+					}
+					++appendd;
 				}
 				else
-					lastexecme = execme;
+					break;
+				execme = "";		
 			}
-			else if(lastcmd == 1){
-				if(lastexecme != ""){
-					execredir(lastexecme, execme, 1, 1);
-					lastexecme = "";
-				}
-				else
-					lastexecme = execme;
+			else{
+				execme.append(cmds.at(i));
+				execme.append(" ");
 			}
-			else if(lastcmd == 2){
-				if(lastexecme != ""){
-					execredir(lastexecme, execme, 1, 2);
-					lastexecme = "";
-				}
-				else
-					lastexecme = execme;
-			}
-			else if(lastcmd == 3){
-
-			}
-			if(cmds.at(i) == "<")
-				lastcmd = 0;
-			else if(cmds.at(i) == ">")
-				lastcmd = 1;
-			else if(cmds.at(i) == ">>")
-				lastcmd = 2;
-			else if(cmds.at(i) == "|")
-				lastcmd = 3;
-			else
-				break;
-			execme = "";		
-		}
-		else{
-			execme.append(cmds.at(i));
-			execme.append(" ");
 		}
 	}
 	return 0;
