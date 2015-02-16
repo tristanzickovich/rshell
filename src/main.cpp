@@ -128,7 +128,7 @@ int execredir(string left, string right, int dupval, int ID){
 	return -1;
 }
 
-int execredir2(string left, string middle, string right){
+int execredir2(string left, string middle, string right, int dupval){
 	int var;
 	right = cleanup(right);
 	middle = cleanup(middle);
@@ -142,7 +142,11 @@ int execredir2(string left, string middle, string right){
 	for(unsigned i = 0; i < charvec.size(); ++i){
 		argchar[i] = charvec.at(i);
 	}
-	int fd1 = open(right.c_str(), outlist); 
+	int fd1;
+	if(dupval == 0)
+		fd1 = open(right.c_str(), outlist); 
+	if(dupval == 1)
+		fd1 = open(right.c_str(), appendlist);
 	if(fd1 == -1){
 		perror("Open Error");
 		exit(1);
@@ -239,10 +243,11 @@ int execRedirection(vector<string> cmds){
 		unsigned inn = 0, outt = 0, appendd = 0;
 		cmds.push_back(";");
 		string execme = "", lastexecme = "", midexecme = "";
+		int lastcmd = 0;
 		for(unsigned i = 0; i < cmds.size(); ++i){
 			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == ";"){
 				if(lastexecme != ""){
-					execredir2(lastexecme, midexecme, execme);
+					execredir2(lastexecme, midexecme, execme, lastcmd);
 					lastexecme = "";
 				}
 				else if(midexecme != ""){
@@ -266,6 +271,7 @@ int execRedirection(vector<string> cmds){
 					++outt;
 				}
 				else if(cmds.at(i) == ">>"){
+					lastcmd = 1;
 					if(outt == 1 || appendd == 1){
 						cerr << "Error: Only one '>' or '>>' allowed." << endl;
 						break;
