@@ -16,6 +16,10 @@
 #include <pwd.h>
 #include <sys/types.h>
 
+#define outlist O_RDWR|O_CREAT|O_TRUNC, 0644
+#define inlist O_RDONLY
+#define appendlist O_RDWR|O_CREAT|O_APPEND, 0644
+
 using namespace std;
 string cleanup(string cmd){
 	if(!cmd.empty()){	
@@ -53,7 +57,7 @@ vector<char*> convertvec(vector<string> conv){
 	return charvec;
 }
 
-int inR(string left, string right){
+int execredir(string left, string right, int dupval, int ID){
 	int var;
 	right = cleanup(right);
 	left = cleanup(left);
@@ -67,72 +71,19 @@ int inR(string left, string right){
 	for(unsigned i = 0; i < charvec.size(); ++i){
 		argchar[i] = charvec.at(i);
 	}
-	int fdi = open(right.c_str(), O_RDONLY);
-	if(fdi == -1){
+	int fd = -1;
+	if(ID == 0)
+		fd = open(right.c_str(), inlist); 
+	if(ID == 1)
+		fd = open(right.c_str(), outlist); 
+	if(ID == 2)
+		fd = open(right.c_str(), appendlist); 
+
+	if(fd == -1){
 		perror("Open Error");
 		exit(1);
 	}
-	int returnstd = dup(0);
-
-	int pid = fork();
-		if(pid == -1){
-		perror("Error with fork()");
-		exit(1);
-	}
-	else if(pid == 0){
-		if(-1 == close(0)){
-			perror("Close Error");
-			exit(1);
-		}
-		if(-1 == dup(fdi)){
-			perror("Dup Error");
-			exit(1);
-		}
-		execvp(argchar[0], argchar);
-		perror("Exec failed");
-		exit(1);
-	}
-	else if(pid != 0){
-		while(wait(&var) != pid)
-			perror("Error with wait()");
-		if(-1 == close(fdi)){
-			perror("Close Error");
-			exit(1);
-		}
-		if(-1 == dup(returnstd)){
-			perror("Dup Error");
-			exit(1);
-		}
-		for(unsigned i = 0; i <  charvec.size(); ++i)
-			delete [] charvec.at(i);
-		return var;
-	}
-	for(unsigned i = 0; i <  charvec.size(); ++i)
-			delete [] charvec.at(i);
-
-	return -1;
-}
-
-int outR(string left, string right){
-	int var;
-	right = cleanup(right);
-	left = cleanup(left);
-	vector<string> getready;
-	left.c_str();
-	boost::split(getready, left, boost::is_any_of(" "),	
-			  boost::token_compress_on);
-
-	vector<char*> charvec = convertvec(getready);	
-	char *argchar[300]; 
-	for(unsigned i = 0; i < charvec.size(); ++i){
-		argchar[i] = charvec.at(i);
-	}
-	int fdo = open(right.c_str(), O_RDWR|O_CREAT|O_TRUNC, 0644);
-	if(fdo == -1){
-		perror("Open Error");
-		exit(1);
-	}
-	int returnstd = dup(1);
+	int returnstd = dup(dupval);
 
 	int pid = fork();
 	if(pid == -1){
@@ -140,11 +91,11 @@ int outR(string left, string right){
 		exit(1);
 	}
 	else if(pid == 0){
-		if(-1 == close(1)){
+		if(-1 == close(dupval)){
 			perror("Close Error");
 			exit(1);
 		}
-		if(-1 == dup(fdo)){
+		if(-1 == dup(fd)){
 			perror("Dup Error");
 			exit(1);
 		}
@@ -155,7 +106,7 @@ int outR(string left, string right){
 	else if(pid != 0){
 		while(wait(&var) != pid)
 			perror("Error with wait()");
-		if(-1 == close(fdo)){
+		if(-1 == close(fd)){
 			perror("Close Error");
 			exit(1);
 		}
@@ -181,7 +132,7 @@ int execRedirection(vector<string> cmds){
 		if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "|" || cmds.at(i) == ";"){
 			if(lastcmd == 0){
 				if(lastexecme != ""){
-					inR(lastexecme, execme);
+					execredir(lastexecme, execme, 0, 0);
 					lastexecme = "";
 				}
 				else
@@ -189,14 +140,19 @@ int execRedirection(vector<string> cmds){
 			}
 			else if(lastcmd == 1){
 				if(lastexecme != ""){
-					outR(lastexecme, execme);
+					execredir(lastexecme, execme, 1, 1);
 					lastexecme = "";
 				}
 				else
 					lastexecme = execme;
 			}
 			else if(lastcmd == 2){
-
+				if(lastexecme != ""){
+					execredir(lastexecme, execme, 1, 2);
+					lastexecme = "";
+				}
+				else
+					lastexecme = execme;
 			}
 			else if(lastcmd == 3){
 
