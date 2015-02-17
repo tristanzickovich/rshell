@@ -229,6 +229,7 @@ int execredir2(string left, string middle, string right, int dupval){
 
 
 int execRedirection(vector<string> cmds){
+	int rval = -1;
 	bool indetect = false, in3detect = false, outdetect = false, appenddetect = false, pipedetect = false;
 	for(unsigned i = 0; i < cmds.size(); ++i){
 		if(cmds.at(i) == "<")
@@ -255,10 +256,10 @@ int execRedirection(vector<string> cmds){
 						if(midexecme.at(0) == '"' && midexecme.at(midexecme.size()-2) == '"')
 							midexecme = midexecme.substr(1, midexecme.size()-3);
 						lastexecme = "echo " + midexecme;
-						execredir(lastexecme, execme, 1, ID);
+						rval = execredir(lastexecme, execme, 1, ID);
 					}
 					else
-						execredir2(lastexecme, midexecme, execme, lastcmd);
+						rval = execredir2(lastexecme, midexecme, execme, lastcmd);
 					lastexecme = "";
 				}
 				else if(midexecme != ""){
@@ -269,21 +270,21 @@ int execRedirection(vector<string> cmds){
 					midexecme = execme;
 				if(cmds.at(i) == "<"){
 					if(inn == 1 || inn2 == 1){
-						cerr << "Error: Only one input allowed." << endl;
+						cerr << "Error: Only one input allowed. Only first was executed." << endl;
 						break;
 					}
 					++inn;
 				}
 				else if(cmds.at(i) == "<<<"){
 					if(inn == 1 || inn2 == 1){
-						cerr << "Error: Only one input allowed." << endl;
+						cerr << "Error: Only one input allowed. Only first was executed." << endl;
 						break;
 					}
 					++inn2;
 				}
 				else if(cmds.at(i) == ">"){
 					if(outt == 1 || appendd == 1){
-						cerr << "Error: Only one ouput allowed." << endl;
+						cerr << "Error: Only one ouput allowed. Only first was executed." << endl;
 						break;
 					}
 					++outt;
@@ -292,7 +293,7 @@ int execRedirection(vector<string> cmds){
 					ID = 2;
 					lastcmd = 1;
 					if(outt == 1 || appendd == 1){
-						cerr << "Error: Only one output allowed." << endl;
+						cerr << "Error: Only one output allowed. Only first was executed." << endl;
 						break;
 					}
 					++appendd;
@@ -317,7 +318,7 @@ int execRedirection(vector<string> cmds){
 			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "<<<" || cmds.at(i) == ";"){
 				if(lastcmd == 0){
 					if(lastexecme != ""){
-						execredir(lastexecme, execme, 0, 0);
+						rval = execredir(lastexecme, execme, 0, 0);
 						lastexecme = "";
 					}
 					else
@@ -325,7 +326,7 @@ int execRedirection(vector<string> cmds){
 				}
 				else if(lastcmd == 1){
 					if(lastexecme != ""){
-						execredir(lastexecme, execme, 1, 1);
+						rval = execredir(lastexecme, execme, 1, 1);
 						lastexecme = "";
 					}
 					else
@@ -333,7 +334,7 @@ int execRedirection(vector<string> cmds){
 				}
 				else if(lastcmd == 2){
 					if(lastexecme != ""){
-						execredir(lastexecme, execme, 1, 2);
+						rval = execredir(lastexecme, execme, 1, 2);
 						lastexecme = "";
 					}
 					else
@@ -345,6 +346,7 @@ int execRedirection(vector<string> cmds){
 							cout << execme.substr(1, execme.size()-3) << endl;
 						else
 							cout << execme << endl;
+						rval = 0;
 						lastexecme = "";
 					}
 					else
@@ -353,7 +355,7 @@ int execRedirection(vector<string> cmds){
 				if(cmds.at(i) == "<"){
 					lastcmd = 0;
 					if(inn == 1 || inn2 == 1){
-						cerr << "Error: Only one '<' allowed. Only first was executed." << endl;
+						cerr << "Error: Only one input allowed. Only first was executed." << endl;
 						break;
 					}
 					++inn;
@@ -361,7 +363,7 @@ int execRedirection(vector<string> cmds){
 				else if(cmds.at(i) == ">"){
 					lastcmd = 1;
 					if(outt == 1 || appendd == 1){
-						cerr << "Error: Only one '>' or '>>' allowed. Only first was executed." << endl;
+						cerr << "Error: Only one output allowed. Only first was executed." << endl;
 						break;
 					}
 					++outt;
@@ -369,7 +371,7 @@ int execRedirection(vector<string> cmds){
 				else if(cmds.at(i) == ">>"){
 					lastcmd = 2;
 					if(outt == 1 || appendd == 1){
-						cerr << "Error: Only one '>' or '>>' allowed. Only first was executed." << endl;
+						cerr << "Error: Only one output allowed. Only first was executed." << endl;
 						break;
 					}
 					++appendd;
@@ -392,7 +394,7 @@ int execRedirection(vector<string> cmds){
 			}
 		}
 	}
-	return 0;
+	return rval;
 }
 
 int execute(string commands){
