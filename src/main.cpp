@@ -17,9 +17,9 @@
 #include <sys/types.h>
 #include <algorithm>
 
-#define outlist O_RDWR|O_CREAT|O_TRUNC, 0644
+#define outlist O_RDWR|O_CREAT|O_TRUNC, 744
 #define inlist O_RDONLY
-#define appendlist O_RDWR|O_CREAT|O_APPEND, 0644
+#define appendlist O_RDWR|O_CREAT|O_APPEND, 744
 
 using namespace std;
 string cleanup(string cmd){
@@ -264,7 +264,7 @@ int execRedirection(vector<string> cmds){
 				}
 				else if(midexecme != ""){
 					lastexecme = midexecme;
-					midexecme = execme;
+					midexecme = execme ;
 				}
 				else
 					midexecme = execme;
