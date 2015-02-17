@@ -224,14 +224,17 @@ int execredir2(string left, string middle, string right, int dupval){
 			delete [] charvec.at(i);
 
 	return -1;
-
 }
 
+
+
 int execRedirection(vector<string> cmds){
-	bool indetect = false, outdetect = false, appenddetect = false, pipedetect = false;
+	bool indetect = false, in3detect = false, outdetect = false, appenddetect = false, pipedetect = false;
 	for(unsigned i = 0; i < cmds.size(); ++i){
 		if(cmds.at(i) == "<")
 			indetect = true;
+		if(cmds.at(i) == "<<<")
+			in3detect = true;
 		if(cmds.at(i) == ">")
 			outdetect = true;
 		if(cmds.at(i) == ">>")
@@ -239,15 +242,23 @@ int execRedirection(vector<string> cmds){
 		if(cmds.at(i) == "|")
 			pipedetect = true;
 	}	
-	if(indetect && (outdetect || appenddetect)){
-		unsigned inn = 0, outt = 0, appendd = 0;
+	if((indetect || in3detect) && (outdetect || appenddetect)){
+		unsigned inn = 0, inn2 = 0, outt = 0, appendd = 0;
 		cmds.push_back(";");
 		string execme = "", lastexecme = "", midexecme = "";
 		int lastcmd = 0;
+		int ID = 1;
 		for(unsigned i = 0; i < cmds.size(); ++i){
-			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == ";"){
+			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "<<<" || cmds.at(i) == ";"){
 				if(lastexecme != ""){
-					execredir2(lastexecme, midexecme, execme, lastcmd);
+					if(inn2 == 1){
+						if(midexecme.at(0) == '"' && midexecme.at(midexecme.size()-2) == '"')
+							midexecme = midexecme.substr(1, midexecme.size()-3);
+						lastexecme = "echo " + midexecme;
+						execredir(lastexecme, execme, 1, ID);
+					}
+					else
+						execredir2(lastexecme, midexecme, execme, lastcmd);
 					lastexecme = "";
 				}
 				else if(midexecme != ""){
@@ -257,23 +268,31 @@ int execRedirection(vector<string> cmds){
 				else
 					midexecme = execme;
 				if(cmds.at(i) == "<"){
-					if(inn == 1){
-						cerr << "Error: Only one '<' allowed." << endl;
+					if(inn == 1 || inn2 == 1){
+						cerr << "Error: Only one input allowed." << endl;
 						break;
 					}
 					++inn;
 				}
+				else if(cmds.at(i) == "<<<"){
+					if(inn == 1 || inn2 == 1){
+						cerr << "Error: Only one input allowed." << endl;
+						break;
+					}
+					++inn2;
+				}
 				else if(cmds.at(i) == ">"){
 					if(outt == 1 || appendd == 1){
-						cerr << "Error: Only one '>' or '>>' allowed." << endl;
+						cerr << "Error: Only one ouput allowed." << endl;
 						break;
 					}
 					++outt;
 				}
 				else if(cmds.at(i) == ">>"){
+					ID = 2;
 					lastcmd = 1;
 					if(outt == 1 || appendd == 1){
-						cerr << "Error: Only one '>' or '>>' allowed." << endl;
+						cerr << "Error: Only one output allowed." << endl;
 						break;
 					}
 					++appendd;
@@ -289,13 +308,13 @@ int execRedirection(vector<string> cmds){
 		}
 
 	}
-	else if(indetect || outdetect || appenddetect){
-		unsigned inn = 0, outt = 0, appendd = 0;
+	else if(indetect || in3detect || outdetect || appenddetect){
+		unsigned inn = 0, inn2 = 0, outt = 0, appendd = 0;
 		cmds.push_back(";");
 		string execme = "", lastexecme = "";
 		int lastcmd = 0;
 		for(unsigned i = 0; i < cmds.size(); ++i){
-			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == ";"){
+			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "<<<" || cmds.at(i) == ";"){
 				if(lastcmd == 0){
 					if(lastexecme != ""){
 						execredir(lastexecme, execme, 0, 0);
@@ -320,9 +339,20 @@ int execRedirection(vector<string> cmds){
 					else
 						lastexecme = execme;
 				}
+				else if (lastcmd == 3){
+					if(lastexecme != ""){
+						if(execme.at(0) == '"' && execme.at(execme.size()-2) == '"')
+							cout << execme.substr(1, execme.size()-3) << endl;
+						else
+							cout << execme << endl;
+						lastexecme = "";
+					}
+					else
+						lastexecme = execme;
+				}
 				if(cmds.at(i) == "<"){
 					lastcmd = 0;
-					if(inn == 1){
+					if(inn == 1 || inn2 == 1){
 						cerr << "Error: Only one '<' allowed. Only first was executed." << endl;
 						break;
 					}
@@ -343,6 +373,14 @@ int execRedirection(vector<string> cmds){
 						break;
 					}
 					++appendd;
+				}
+				else if(cmds.at(i) == "<<<"){
+					lastcmd = 3;
+					if(inn == 1 || inn2 == 1){
+						cerr << "Error: Only one input allowed. Only first was executed." << endl;
+						break;
+					}
+					++inn2;
 				}
 				else
 					break;
@@ -371,7 +409,7 @@ int execute(string commands){
 	}
 	for(unsigned i = 0; i < getready.size(); ++i){
 		if(getready.at(i) == "|" || getready.at(i) == "<" || getready.at(i) == ">"
-							|| getready.at(i) == ">>"){
+							|| getready.at(i) == ">>" || getready.at(i) == "<<<"){
 			return execRedirection(getready);
 		}
 	}
