@@ -17,9 +17,11 @@
 #include <sys/types.h>
 #include <algorithm>
 
-#define outlist O_RDWR|O_CREAT|O_TRUNC, 744
+#define outlist O_RDWR|O_CREAT|O_TRUNC, 00744
 #define inlist O_RDONLY
-#define appendlist O_RDWR|O_CREAT|O_APPEND, 744
+#define appendlist O_RDWR|O_CREAT|O_APPEND, 00744
+#define num0appendlist O_RDONLY|O_CREAT|O_APPEND, 00744
+#define num0outlist O_RDONLY|O_TRUNC
 
 using namespace std;
 string cleanup(string cmd){
@@ -58,6 +60,13 @@ vector<char*> convertvec(vector<string> conv){
 	return charvec;
 }
 
+//is_number function taken from stackoverflow.com
+bool is_number(const string& s){
+	string::const_iterator it = s.begin();
+	while(it != s.end() && isdigit(*it)) ++it;
+	return !s.empty() && it == s.end();
+}
+
 int execredir(string left, string right, int dupval, int ID){
 	int var;
 	right = cleanup(right);
@@ -74,11 +83,14 @@ int execredir(string left, string right, int dupval, int ID){
 	int fd = -1;
 	if(ID == 0)
 		fd = open(right.c_str(), inlist); 
-	if(ID == 1)
+	if(ID == 1 || ID == 4)
 		fd = open(right.c_str(), outlist); 
-	if(ID == 2)
+	if(ID == 2 || ID == 6)
 		fd = open(right.c_str(), appendlist); 
-
+	if(ID == 3)
+		fd = open(right.c_str(), num0outlist);
+	if(ID == 5)
+		fd = open(right.c_str(), num0appendlist);
 	if(fd == -1){
 		perror("Open Error");
 		exit(1);
@@ -230,7 +242,9 @@ int execredir2(string left, string middle, string right, int dupval){
 
 int execRedirection(vector<string> cmds){
 	int rval = -1;
-	bool indetect = false, in3detect = false, outdetect = false, appenddetect = false, pipedetect = false;
+	bool indetect = false, in3detect = false, outdetect = false, appenddetect = false, pipedetect = false,
+		numoutdetect = false, numappenddetect = false;
+	int numout, numappend;
 	for(unsigned i = 0; i < cmds.size(); ++i){
 		if(cmds.at(i) == "<")
 			indetect = true;
@@ -242,6 +256,14 @@ int execRedirection(vector<string> cmds){
 			appenddetect = true;
 		if(cmds.at(i) == "|")
 			pipedetect = true;
+		if(is_number(cmds.at(i)) && (i+1 < cmds.size() && cmds.at(i+1) == ">" && !numoutdetect)){
+			numoutdetect = true;
+			numout = atoi(cmds.at(i).c_str());
+		}
+		if(is_number(cmds.at(i)) && (i+1 < cmds.size() && cmds.at(i+1) == ">>" && !numappenddetect)){
+			numappenddetect = true;
+			numappend = atoi(cmds.at(i).c_str());
+		}
 	}	
 	if((indetect || in3detect) && (outdetect || appenddetect)){
 		unsigned inn = 0, inn2 = 0, outt = 0, appendd = 0;
@@ -264,7 +286,7 @@ int execRedirection(vector<string> cmds){
 				}
 				else if(midexecme != ""){
 					lastexecme = midexecme;
-					midexecme = execme ;
+					midexecme = execme;
 				}
 				else
 					midexecme = execme;
@@ -315,7 +337,8 @@ int execRedirection(vector<string> cmds){
 		string execme = "", lastexecme = "";
 		int lastcmd = 0;
 		for(unsigned i = 0; i < cmds.size(); ++i){
-			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "<<<" || cmds.at(i) == ";"){
+			if(is_number(cmds.at(i)) && i+1 < cmds.size() && (cmds.at(i+1) == ">>" || cmds.at(i+1) == ">"));
+			else if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "<<<" || cmds.at(i) == ";"){
 				if(lastcmd == 0){
 					if(lastexecme != ""){
 						rval = execredir(lastexecme, execme, 0, 0);
@@ -326,7 +349,14 @@ int execRedirection(vector<string> cmds){
 				}
 				else if(lastcmd == 1){
 					if(lastexecme != ""){
-						rval = execredir(lastexecme, execme, 1, 1);
+						if(numoutdetect){
+							if(numout == 0)
+								rval = execredir(lastexecme, execme, numout, 3);
+							else
+								rval = execredir(lastexecme, execme, numout, 4);
+						}
+						else
+							rval = execredir(lastexecme, execme, 1, 1);
 						lastexecme = "";
 					}
 					else
@@ -334,7 +364,14 @@ int execRedirection(vector<string> cmds){
 				}
 				else if(lastcmd == 2){
 					if(lastexecme != ""){
-						rval = execredir(lastexecme, execme, 1, 2);
+						if(numappenddetect){
+							if(numappend == 0)
+								rval = execredir(lastexecme, execme, numappend, 5);
+							else
+								rval = execredir(lastexecme, execme, numappend, 6);
+						}
+						else
+							rval = execredir(lastexecme, execme, 1, 2);
 						lastexecme = "";
 					}
 					else
