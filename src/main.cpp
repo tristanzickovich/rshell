@@ -67,6 +67,11 @@ bool is_number(const string& s){
 	return !s.empty() && it == s.end();
 }
 
+void deletevec(vector<char*> rmvec){
+	for(unsigned i = 0; i <  rmvec.size(); ++i)
+		delete [] rmvec.at(i);
+}
+
 int execredir(string left, string right, int dupval, int ID){
 	int var;
 	right = cleanup(right);
@@ -93,12 +98,14 @@ int execredir(string left, string right, int dupval, int ID){
 		fd = open(right.c_str(), num0appendlist);
 	if(fd == -1){
 		perror("Open Error");
-		exit(1);
+		deletevec(charvec);
+		return(-1);
 	}
 	int returnstd = dup(dupval);
 	if(returnstd == -1){
 		perror("Dup Error");
-		exit(1);
+		deletevec(charvec);
+		return(-1);
 	}
 
 	int pid = fork();
@@ -130,13 +137,10 @@ int execredir(string left, string right, int dupval, int ID){
 			perror("Dup Error");
 			exit(1);
 		}
-		for(unsigned i = 0; i <  charvec.size(); ++i)
-			delete [] charvec.at(i);
+		deletevec(charvec);
 		return var;
 	}
-	for(unsigned i = 0; i <  charvec.size(); ++i)
-			delete [] charvec.at(i);
-
+		deletevec(charvec);
 	return -1;
 }
 
@@ -161,24 +165,28 @@ int execredir2(string left, string middle, string right, int dupval){
 		fd1 = open(right.c_str(), appendlist);
 	if(fd1 == -1){
 		perror("Open Error");
-		exit(1);
+		deletevec(charvec);
+		return(-1);
 	}	
 	int fd2 = open(middle.c_str(), O_RDONLY); 
 	if(fd2 == -1){
 		perror("Open Error");
-		exit(1);
+		deletevec(charvec);
+		return(-1);
 	}
 
 	int returnstdin = dup(0);
 	if(returnstdin == -1){
 		perror("Dup Error");
-		exit(1);
+		deletevec(charvec);
+		return(-1);
 	}
 
 	int returnstdout = dup(1);
 	if(returnstdout == -1){
 		perror("Dup Error");
-		exit(1);
+		deletevec(charvec);
+		return(-1);
 	}
 
 	int pid = fork();
@@ -227,14 +235,10 @@ int execredir2(string left, string middle, string right, int dupval){
 			perror("Dup Error");
 			exit(1);
 		}
-
-		for(unsigned i = 0; i <  charvec.size(); ++i)
-			delete [] charvec.at(i);
+		deletevec(charvec);
 		return var;
 	}
-	for(unsigned i = 0; i <  charvec.size(); ++i)
-			delete [] charvec.at(i);
-
+	deletevec(charvec);
 	return -1;
 }
 
