@@ -271,17 +271,24 @@ int execRedirection(vector<string> cmds){
 		string execme = "", lastexecme = "", midexecme = "";
 		int lastcmd = 0;
 		int ID = 1;
+		bool infirst;
 		for(unsigned i = 0; i < cmds.size(); ++i){
-			if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "<<<" || cmds.at(i) == ";"){
+			if(is_number(cmds.at(i)) && i+1 < cmds.size() && (cmds.at(i+1) == ">>" || cmds.at(i+1) == ">"));
+			else if(cmds.at(i) == "<" || cmds.at(i) == ">" || cmds.at(i) == ">>" || cmds.at(i) == "<<<" || cmds.at(i) == ";"){
 				if(lastexecme != ""){
-					if(inn2 == 1){
-						if(midexecme.at(0) == '"' && midexecme.at(midexecme.size()-2) == '"')
-							midexecme = midexecme.substr(1, midexecme.size()-3);
-						lastexecme = "echo " + midexecme;
-						rval = execredir(lastexecme, execme, 1, ID);
+					if(infirst){
+						if(inn2 == 1){
+							if(midexecme.at(0) == '"' && midexecme.at(midexecme.size()-2) == '"')
+								midexecme = midexecme.substr(1, midexecme.size()-3);
+							lastexecme = "echo " + midexecme;
+							rval = execredir(lastexecme, execme, 1, ID);
+						}
+						else
+							rval = execredir2(lastexecme, midexecme, execme, lastcmd);
 					}
-					else
-						rval = execredir2(lastexecme, midexecme, execme, lastcmd);
+					else{
+						rval = execredir2(lastexecme, execme, midexecme, lastcmd);
+					}
 					lastexecme = "";
 				}
 				else if(midexecme != ""){
@@ -290,6 +297,10 @@ int execRedirection(vector<string> cmds){
 				}
 				else
 					midexecme = execme;
+				if((inn == 1 || inn2 == 1) &&(outt == 0 && appendd == 0))
+					infirst = true;
+				else if ((outt == 1 || appendd == 1) && (inn == 0 && inn2 == 0))
+					infirst = false;
 				if(cmds.at(i) == "<"){
 					if(inn == 1 || inn2 == 1){
 						cerr << "Error: Only one input allowed. Only first was executed." << endl;
