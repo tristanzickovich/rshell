@@ -242,11 +242,9 @@ int execredir2(string left, string middle, string right, int dupval){
 	return -1;
 }
 
-
-
 int execRedirection(vector<string> cmds){
 	int rval = -1;
-	bool indetect = false, in3detect = false, outdetect = false, appenddetect = false, pipedetect = false,
+	bool indetect = false, in3detect = false, outdetect = false, appenddetect = false, 
 		numoutdetect = false, numappenddetect = false;
 	int numout, numappend;
 	for(unsigned i = 0; i < cmds.size(); ++i){
@@ -258,8 +256,6 @@ int execRedirection(vector<string> cmds){
 			outdetect = true;
 		if(cmds.at(i) == ">>")
 			appenddetect = true;
-		if(cmds.at(i) == "|")
-			pipedetect = true;
 		if(is_number(cmds.at(i)) && (i+1 < cmds.size() && cmds.at(i+1) == ">" && !numoutdetect)){
 			numoutdetect = true;
 			numout = atoi(cmds.at(i).c_str());
@@ -452,7 +448,7 @@ int execRedirection(vector<string> cmds){
 int execute(string commands){
 	vector<string> getready;
 	commands = cleanup(commands);	
-	int var;
+	int var, pipedetect = 0;
 	if(commands.size() > 0){
 		commands.c_str();
 		boost::split(getready, commands, boost::is_any_of(" "),	
@@ -462,8 +458,37 @@ int execute(string commands){
 		}
 	}
 	for(unsigned i = 0; i < getready.size(); ++i){
-		if(getready.at(i) == "|" || getready.at(i) == "<" || getready.at(i) == ">"
-							|| getready.at(i) == ">>" || getready.at(i) == "<<<"){
+		if(getready.at(i) == "|")
+			++pipedetect;
+	}
+	if(pipedetect > 0){
+		unsigned pos = 0;
+		while(pipedetect > 0){
+			vector<string> portion;
+			for(unsigned i = pos; i < getready.size(); ++i){
+				if(getready.at(i) != "|")
+					portion.push_back(getready.at(i));
+				else{
+					pos = i + 1;
+					--pipedetect;
+					break;
+				}
+			}
+			int fd[2];
+			if(pipe(fd) == -1){
+				perror("Pipe Error");
+				exit(1);
+			}
+			int pid = fork();
+			if(pid == -1){
+				perror("Fork Error");
+				exit(1);
+			}
+		}
+		return 0;
+	}
+	for(unsigned i = 0; i < getready.size(); ++i){
+		if(getready.at(i) == "<" || getready.at(i) == ">"	|| getready.at(i) == ">>" || getready.at(i) == "<<<"){
 			return execRedirection(getready);
 		}
 	}
