@@ -474,15 +474,95 @@ int execute(string commands){
 					break;
 				}
 			}
+			bool outputdetect = false, inputdetect = false;
+			for(unsigned i = 0; i < portion.size(); ++i){
+				if(portion.at(i) == ">" || portion.at(i) == ">>")
+					outputdetect = true;
+				else if(portion.at(i) == "<" || portion.at(i) == "<<<")
+					inputdetect = true;
+			}
 			int fd[2];
 			if(pipe(fd) == -1){
 				perror("Pipe Error");
 				exit(1);
 			}
+			int returnstd = dup(0);
+			if(returnstd == -1){
+				perror("Dup Error");
+				return(-1);
+			}
+
 			int pid = fork();
 			if(pid == -1){
 				perror("Fork Error");
 				exit(1);
+			}
+			else if(pid == 0){
+
+			}
+			else{
+				while(wait(&var) != pid){
+					perror("Error with wait()");
+					exit(1);
+				}
+				if(-1 == close(fd[1])){
+					perror("Close Error");
+					exit(1);
+				}
+				if(pipedetect > 0){
+					if(-1 == close(0)){
+						perror("Close Error");
+						exit(1);
+					}
+					if(-1 == dup(fd[1])){
+						perror("Dup Error");
+						exit(1);
+					}
+					continue;
+				}
+				else if(outputdetect){
+					execRedirection(portion);
+				}
+				else{
+					int pid2 = fork();
+					if(pid2 == -1){
+						perror("Fork Error");
+						exit(1);
+					}
+					if(pid2 == 0){
+						string temp;
+						for(unsigned i = pos; i < getready.size(); ++i){
+							if(getready.at(i) != "|"){
+								temp += getready.at(i);
+								temp += " ";
+							}
+							else{
+								pos = i + 1;
+								--pipedetect;
+								break;
+							}
+						}
+						execute(temp);
+					}
+					else{
+						while(wait(&var) == -1){
+							perror("Wait Error");
+							exit(1);
+						}
+						if(-1 == close(0)){
+							perror("Close Error");
+							exit(1);
+						}
+						if(-1 == close(fd[0])){
+							perror("Close Error");
+							exit(1);
+						}
+						if(-1 == dup(returnstd)){
+							perror("Dup Error");
+							exit(1);
+						}
+					}
+				}
 			}
 		}
 		return 0;
