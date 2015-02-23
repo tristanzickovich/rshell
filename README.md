@@ -28,9 +28,13 @@ ex)
 * Any of the following characters entered before commands will be ignored:<br />
 space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 * The above are also handled if appended to the end of your command
+* Input/Output Redirection are handled using: (input symbols):'<', '<<<'
+	(outputsymbols):'>', '>>' or '#>', # being 0 for stdin, 1 for stdout, 2 for stderror
+* No more than one input symbol and one output symbol are allowed
+* You may do input and output on same line in any order
 
 ## Known Bugs:
-* There are some memory leaks that have yet to be resolved 
+* Piping does not work 
 
 #Ls:
 
