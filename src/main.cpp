@@ -88,20 +88,45 @@ int execredir(string left, string right, int dupval, int ID){
 		argchar[i] = charvec.at(i);
 	}
 	int fd = -1;
-	if(ID == 0)
+	if(ID == 0){
 		fd = open(right.c_str(), inlist); 
-	if(ID == 1 || ID == 4)
-		fd = open(right.c_str(), outlist); 
-	if(ID == 2 || ID == 6)
-		fd = open(right.c_str(), appendlist); 
-	if(ID == 3)
-		fd = open(right.c_str(), num0outlist);
-	if(ID == 5)
-		fd = open(right.c_str(), num0appendlist);
-	if(fd == -1){
+		if(fd == -1){
 		perror("Open Error");
 		deletevec(charvec);
 		return(-1);
+		}
+	}
+	if(ID == 1 || ID == 4){
+		fd = open(right.c_str(), outlist); 
+		if(fd == -1){
+		perror("Open Error");
+		deletevec(charvec);
+		return(-1);
+		}
+	}
+	if(ID == 2 || ID == 6){
+		fd = open(right.c_str(), appendlist); 
+		if(fd == -1){
+		perror("Open Error");
+		deletevec(charvec);
+		return(-1);
+		}
+	}
+	if(ID == 3){
+		fd = open(right.c_str(), num0outlist);
+		if(fd == -1){
+		perror("Open Error");
+		deletevec(charvec);
+		return(-1);
+		}
+	}
+	if(ID == 5){
+		fd = open(right.c_str(), num0appendlist);
+		if(fd == -1){
+			perror("Open Error");
+			deletevec(charvec);
+			return(-1);
+		}
 	}
 	int returnstd = dup(dupval);
 	if(returnstd == -1){
@@ -161,15 +186,22 @@ int execredir2(string left, string middle, string right, int dupval){
 		argchar[i] = charvec.at(i);
 	}
 	int fd1;
-	if(dupval == 0)
+	if(dupval == 0){
 		fd1 = open(right.c_str(), outlist); 
-	if(dupval == 1)
+		if(fd1 == -1){
+			perror("Open Error");
+			deletevec(charvec);
+			return(-1);
+		}
+	}
+	if(dupval == 1){
 		fd1 = open(right.c_str(), appendlist);
-	if(fd1 == -1){
-		perror("Open Error");
-		deletevec(charvec);
-		return(-1);
-	}	
+		if(fd1 == -1){
+			perror("Open Error");
+			deletevec(charvec);
+			return(-1);
+		}	
+	}
 	int fd2 = open(middle.c_str(), O_RDONLY); 
 	if(fd2 == -1){
 		perror("Open Error");
