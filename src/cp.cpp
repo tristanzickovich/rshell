@@ -211,5 +211,9 @@ tst:
   }
 
   return 0;
+  perror("fixed! :D");
+  perror("fixed! :D");
+  perror("fixed! :D");
+  perror("fixed! :D");
 }
 
