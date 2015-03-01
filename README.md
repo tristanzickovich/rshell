@@ -4,7 +4,7 @@ It takes in and executes commands as a terminal would.
 
 ex)
 
-``$ pwd``
+``$ pwd``   
 ``home/curuser/Documents/rshell``
 #Rshell
 
@@ -32,6 +32,10 @@ space, tab, ';' semi-colon, '&' ampersand, '|' vertical bar
 	(outputsymbols):'>', '>>' or '#>', # being 0 for stdin, 1 for stdout, 2 for stderror
 * No more than one input symbol and one output symbol are allowed
 * You may do input and output on same line in any order
+* cd command with no paramters will prompt an error message notifying no change occured.
+* cd with multiple parameters, only the first will be executed
+* CTRL C will cause the current foreground job to interrupt.
+* CTRL Z will pause the foreground process.
 
 ## Known Bugs:
 * Piping does not work 
