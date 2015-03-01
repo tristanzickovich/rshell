@@ -28,7 +28,7 @@ using namespace std;
 
 void handler(int i){
 	if(i == SIGINT){
-		raise(SIGSTOP);
+		cout << endl;	
 	}
 
 }
