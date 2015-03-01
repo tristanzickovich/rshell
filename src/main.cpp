@@ -535,7 +535,10 @@ int execute(string commands){
 		}
 		else if(getready.at(0) == "fg"){
 			if(killpid != 0){
-				kill(killpid, SIGCONT);
+				if(-1 == kill(killpid, SIGCONT)){
+					perror("Kill Error");
+					exit(1);
+				}
 				return 0;
 			}
 			cout << "fg: current: no such job" << endl;
@@ -543,7 +546,10 @@ int execute(string commands){
 		}
 		else if(getready.at(0) == "bg"){
 			if(killpid != 0){
-				kill(killpid, SIGCONT);
+				if(-1 == kill(killpid, SIGCONT)){
+					perror("Kill Error");
+					exit(1);
+				}
 				killpid = 0;
 				return 0;
 			}
