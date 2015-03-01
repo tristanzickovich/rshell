@@ -74,6 +74,8 @@ void deletevec(vector<char*> rmvec){
 
 void findCommands(char **argchar){
 	vector<string> getready;
+	string location;
+	bool found = false;
 	char *path = getenv("PATH");
 	if(path == NULL){
 		perror("Getenv Error");
@@ -82,8 +84,20 @@ void findCommands(char **argchar){
 	string pathlist = path;
 	boost::split(getready, pathlist, boost::is_any_of(":"),	
 			  boost::token_compress_on);
-	//for(unsigned i = 0; i < getready.size(); ++i)
-	//cout << "Path" << getready.at(i) << endl;
+	for(unsigned i = 0; i < getready.size(); ++i){
+		struct stat sb;
+		location = getready.at(i) + "/" + argchar[0];
+		if(-1 == stat(location.c_str(), &sb)){
+			continue;	
+			perror("Stat Error");
+		}
+		else{
+			found = true;
+			break;
+		}
+	}
+	execv(location.c_str(), argchar);
+	perror("Execv Error");
 	exit(1);
 }
 
@@ -164,9 +178,7 @@ int execredir(string left, string right, int dupval, int ID){
 			perror("Dup Error");
 			exit(1);
 		}
-		execvp(argchar[0], argchar);
-		perror("Exec failed");
-		exit(1);
+		findCommands(argchar);
 	}
 	else if(pid != 0){
 		while(wait(&var) != pid)
@@ -260,10 +272,7 @@ int execredir2(string left, string middle, string right, int dupval){
 			perror("Dup Error");
 			exit(1);
 		}
-		
-		execvp(argchar[0], argchar);
-		perror("Exec failed");
-		exit(1);
+		findCommands(argchar);
 	}
 	else if(pid != 0){
 		while(wait(&var) != pid)
@@ -531,9 +540,6 @@ int execute(string commands){
 	}
 	else if(pid == 0){
 		findCommands(argchar);
-		//execvp(argchar[0], argchar);
-		perror("Exec failed");
-		exit(1);
 	}
 	else if(pid != 0){
 		while(wait(&var) != pid)
