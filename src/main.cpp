@@ -84,7 +84,7 @@ void deletevec(vector<char*> rmvec){
 int changeDir(string newdir){
 	if(chdir(newdir.c_str()) == -1){
 		perror("Chdir Error");
-		exit(1);
+		return -1;	
 	}
 	return 0;
 }
@@ -668,7 +668,12 @@ int main(){
 
 	while(true){
 		//output prompt and take in command line
-		//execute("pwd");
+		char cwd[BUFSIZ];
+		if(getcwd(cwd, sizeof(cwd)) == NULL){
+			perror("Getcwd Error");
+			exit(1);
+		}
+		cout << "~" << cwd << endl;
 		cout << curuser << '@' << curhost << ' ';
 		cout << '$' << ' ';
 		string command = "";
