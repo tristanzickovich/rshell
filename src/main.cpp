@@ -81,6 +81,11 @@ void deletevec(vector<char*> rmvec){
 		delete [] rmvec.at(i);
 }
 
+int changeDir(string newdir){
+
+	return -1;
+}
+
 void findCommands(char **argchar){
 	vector<string> getready;
 	string location;
@@ -511,6 +516,14 @@ int execute(string commands){
 			  boost::token_compress_on);
 		if(getready.at(0) == "exit" || getready.at(0) == "EXIT"){
 			exit(1);
+		}
+		if(getready.at(0) == "cd"){
+			if(getready.size() < 2){
+				cerr << "Error: no parameters. Directory not changed." << endl;
+				return -1;
+			}
+			else
+				return changeDir(getready.at(1));
 		}
 	}
 	/*for(unsigned i = 0; i < getready.size(); ++i){
