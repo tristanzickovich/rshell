@@ -16,6 +16,7 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <algorithm>
+#include <signal.h>
 
 #define outlist O_RDWR|O_CREAT|O_TRUNC, 00744
 #define inlist O_RDONLY
@@ -24,6 +25,14 @@
 #define num0outlist O_RDONLY|O_TRUNC
 
 using namespace std;
+
+void handler(int i){
+	if(i == SIGINT){
+		raise(SIGSTOP);
+	}
+
+}
+
 string cleanup(string cmd){
 	if(!cmd.empty()){	
 		//delete preceeding comments or white space
@@ -75,28 +84,17 @@ void deletevec(vector<char*> rmvec){
 void findCommands(char **argchar){
 	vector<string> getready;
 	string location;
-	bool found = false;
 	char *path = getenv("PATH");
 	if(path == NULL){
 		perror("Getenv Error");
 		exit(1);
 	}
-	string pathlist = path;
-	boost::split(getready, pathlist, boost::is_any_of(":"),	
+	boost::split(getready, path, boost::is_any_of(":"),	
 			  boost::token_compress_on);
 	for(unsigned i = 0; i < getready.size(); ++i){
-		struct stat sb;
 		location = getready.at(i) + "/" + argchar[0];
-		if(-1 == stat(location.c_str(), &sb)){
-			continue;	
-			perror("Stat Error");
-		}
-		else{
-			found = true;
-			break;
-		}
+		execv(location.c_str(), argchar);
 	}
-	execv(location.c_str(), argchar);
 	perror("Execv Error");
 	exit(1);
 }
@@ -635,6 +633,7 @@ string specialspacing(string fixer){
 }
 
 int main(){
+	signal(SIGINT, handler);
 	vector<string> cmdline;
 	struct passwd *pass = getpwuid(getuid());
 	if(pass == NULL){
