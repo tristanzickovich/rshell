@@ -25,7 +25,7 @@
 #define num0outlist O_RDONLY|O_TRUNC
 
 using namespace std;
-
+int killpid = 0;
 void handler(int i){
 	if(i == SIGINT){
 		return;
@@ -174,6 +174,7 @@ int execredir(string left, string right, int dupval, int ID){
 	}
 
 	int pid = fork();
+	killpid = pid;
 	if(pid == -1){
 		perror("Error with fork()");
 		exit(1);
@@ -260,6 +261,7 @@ int execredir2(string left, string middle, string right, int dupval){
 	}
 
 	int pid = fork();
+	killpid = pid;
 	if(pid == -1){
 		perror("Error with fork()");
 		exit(1);
@@ -523,13 +525,30 @@ int execute(string commands){
 		if(getready.at(0) == "exit" || getready.at(0) == "EXIT"){
 			exit(1);
 		}
-		if(getready.at(0) == "cd"){
+		else if(getready.at(0) == "cd"){
 			if(getready.size() < 2){
 				cerr << "Error: no parameters. Directory not changed." << endl;
 				return -1;
 			}
 			else
 				return changeDir(getready.at(1));
+		}
+		else if(getready.at(0) == "fg"){
+			if(killpid != 0){
+				kill(killpid, SIGCONT);
+				return 0;
+			}
+			cout << "fg: current: no such job" << endl;
+			return -1;
+		}
+		else if(getready.at(0) == "bg"){
+			if(killpid != 0){
+				kill(killpid, SIGCONT);
+				killpid = 0;
+				return 0;
+			}
+			cout << "bg: current: no such job" << endl;
+			return -1;
 		}
 	}
 	/*for(unsigned i = 0; i < getready.size(); ++i){
@@ -551,6 +570,7 @@ int execute(string commands){
 		argchar[i] = charvec.at(i);
 	}
 	int pid = fork();
+	killpid = pid;
 	if(pid == -1){
 		perror("Error with fork()");
 		exit(1);
@@ -652,7 +672,14 @@ string specialspacing(string fixer){
 }
 
 int main(){
-	signal(SIGINT, handler);
+	if(SIG_ERR == signal(SIGINT, handler)){
+		perror("Signal Error");
+		exit(1);
+	}
+	if(SIG_ERR == signal(SIGTSTP, handler)){
+		perror("Signal Error");
+		exit(1);
+	}
 	vector<string> cmdline;
 	struct passwd *pass = getpwuid(getuid());
 	if(pass == NULL){
