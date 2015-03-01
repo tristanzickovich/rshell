@@ -30,7 +30,10 @@ void handler(int i){
 	if(i == SIGINT){
 		return;
 	}
-
+	if(i == SIGTSTP){
+		raise(SIGSTOP);
+		return;
+	}
 }
 
 string cleanup(string cmd){
