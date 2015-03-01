@@ -72,6 +72,21 @@ void deletevec(vector<char*> rmvec){
 		delete [] rmvec.at(i);
 }
 
+void findCommands(char **argchar){
+	vector<string> getready;
+	char *path = getenv("PATH");
+	if(path == NULL){
+		perror("Getenv Error");
+		exit(1);
+	}
+	string pathlist = path;
+	boost::split(getready, pathlist, boost::is_any_of(":"),	
+			  boost::token_compress_on);
+	//for(unsigned i = 0; i < getready.size(); ++i)
+	//cout << "Path" << getready.at(i) << endl;
+	exit(1);
+}
+
 int execute(string commands);
 
 int execredir(string left, string right, int dupval, int ID){
@@ -515,7 +530,8 @@ int execute(string commands){
 		exit(1);
 	}
 	else if(pid == 0){
-		execvp(argchar[0], argchar);
+		findCommands(argchar);
+		//execvp(argchar[0], argchar);
 		perror("Exec failed");
 		exit(1);
 	}
