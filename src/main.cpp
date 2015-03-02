@@ -26,13 +26,17 @@
 
 using namespace std;
 int killpid = 0;
+int mainpid;
 void handler(int i){
 	if(i == SIGINT){
 		return;
 	}
 	if(i == SIGTSTP){
-		raise(SIGSTOP);
-		return;
+		if(killpid != mainpid){
+			kill(killpid, SIGTSTP);
+			cout << endl << "Process Stopped" << endl;
+			kill(mainpid, SIGCONT);
+		}
 	}
 }
 
@@ -534,10 +538,10 @@ int execute(string commands){
 				return changeDir(getready.at(1));
 		}
 		else if(getready.at(0) == "fg"){
-			if(killpid != 0){
+			if(killpid != mainpid){
 				if(-1 == kill(killpid, SIGCONT)){
 					perror("Kill Error");
-					exit(1);
+					return -1;
 				}
 				return 0;
 			}
@@ -545,10 +549,10 @@ int execute(string commands){
 			return -1;
 		}
 		else if(getready.at(0) == "bg"){
-			if(killpid != 0){
+			if(killpid != mainpid){
 				if(-1 == kill(killpid, SIGCONT)){
 					perror("Kill Error");
-					exit(1);
+					return -1;
 				}
 				killpid = 0;
 				return 0;
@@ -678,6 +682,7 @@ string specialspacing(string fixer){
 }
 
 int main(){
+	mainpid = getpid();
 	if(SIG_ERR == signal(SIGINT, handler)){
 		perror("Signal Error");
 		exit(1);
@@ -749,6 +754,7 @@ int main(){
 					//if last was ; (or a brand new command)
 					if(lastcmd == 0){
 						conditional = execute(execme);
+						//killpid = 0;
 						if(conditional == 0)
 							passed = true;
 						else
@@ -758,6 +764,7 @@ int main(){
 					else if(lastcmd == 1){
 						if(passed){
 							conditional = execute(execme);
+							//killpid = 0;
 							if(conditional == 0)
 								passed = true;
 							else
@@ -768,6 +775,7 @@ int main(){
 					else if(lastcmd == 2){
 						if(!passed){
 							conditional = execute(execme);
+							//killpid = 0;
 							if(conditional == 0)
 								passed = true;
 							else
