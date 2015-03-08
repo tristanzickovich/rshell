@@ -1,0 +1,224 @@
+Script started on Sun 08 Mar 2015 03:05:48 PM PDT
+~/Documents/rshell
+tzick002@hammer $ cs100
+[0;91m
+===============================================================================
+|                                                                             |
+| You have enabled settings specific for cs100.  Everything you do is being   |
+| recorded to measure your progress in the class.                             |
+|                                                                             |
+| Important commands for the class:                                           |
+|   * calcgrade.sh          displays a detailed breakdown of your grade       |
+|   * typespeed             practice typing unix commands                     |
+|                                                                             |
+| Important commands for general C++ programming:                             |
+|   * make                  don't call g++ manually; let make do the work!    |
+|   * gdb                   the GNU debugger                                  |
+|   * valgrind              get rid of your memory leaks                      |
+|   * cppcheck              static analysis tool                              |
+|   * man                   find help about any syscall / terminal command    |
+|                                                                             |
+===============================================================================
+[0m
+[s%%%%%%%%%%[u[0;32mtzick002[0;36m@[0;32mcs100[0;36m:[0;32m~/Documents/rshell[0;95m (signals) [0;36m$[0m make
+if [ ! -d bin ]; then mkdir bin; fi
+g++ -g -ansi -pedantic -Wall -Werror src/main.cpp -o bin/rshell
+g++ -g -ansi -pedantic -Wall -Werror src/ls.cpp -o bin/ls
+g++ -g -ansi -pedantic -Wall -Werror src/cp.cpp -o bin/cp
+[s%%%%%%%%%%[u[0;32mtzick002[0;36m@[0;32mcs100[0;36m:[0;32m~/Documents/rshell[0;95m (signals) [0;36m$[0m [24P(reverse-i-search)`':[Cc': cs100[4hs[4l[C[C[C[4h1[4l[C[C[C[4h0[4l[C[C[C[4h0[4l[C[C[C-': cs100-runtests bin/rshell hw3tb 2000000[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[4hr[4l[C[C[C[s%%%%%%%%%%[u[0;32mtzick002[0;36m@[0;32mcs100[0;36m:[0;32m~/Documents/rshell[0;95m (signals) [0;36m$[0m cs100-runtests bin/rshell hw3tb 2000000
+*********
+* hw3tb *
+*********
+================================================================================
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ #prompt displays path
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ 
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ 
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ #testing get path implementation
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ls
+a.out  bin  hw3tb  LICENSE  Makefile  p.cpp  README.md	signals.script	src  tests  tfile
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ pwd
+/home/csmajs/tzick002/Documents/rshell
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ echo hi
+hi
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ echo hi && echo bye
+hi
+bye
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ echo hi || echo bye
+hi
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ls -al
+total 92
+drwx------ 6 tzick002 csmajs  4096 Mar  8 15:01 .
+drwx------ 7 tzick002 csmajs  4096 Feb 25 22:22 ..
+-rwx------ 1 tzick002 csmajs  9728 Mar  1 00:39 a.out
+drwx------ 2 tzick002 csmajs  4096 Mar  8 15:01 bin
+drwx------ 8 tzick002 csmajs  4096 Mar  1 16:01 .git
+-rw------- 1 tzick002 csmajs   856 Mar  8 14:48 hw3tb
+-rw------- 1 tzick002 csmajs 35122 Jan 16 16:30 LICENSE
+-rw------- 1 tzick002 csmajs   443 Feb 14 13:07 Makefile
+-rw------- 1 tzick002 csmajs   154 Feb 28 23:50 p.cpp
+-rw------- 1 tzick002 csmajs  2539 Feb 28 20:22 README.md
+-rw------- 1 tzick002 csmajs     0 Mar  8 15:01 signals.script
+drwx------ 3 tzick002 csmajs  4096 Mar  8 14:41 src
+drwx------ 4 tzick002 csmajs  4096 Mar  4 21:58 tests
+-rw------- 1 tzick002 csmajs  2477 Feb 22 17:29 tfile
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ echo first file > z1
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cat < z1
+first file
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cat < z1 > z2
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cat < z2
+first file
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ echo hi there > z1
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cat < z1 >> z2 && cat < z2
+first file
+hi there
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ /bin/ls
+[1;32ma.out[0;00m  [1;34mbin[0;00m/  hw3tb  LICENSE  Makefile  p.cpp  README.md  signals.script  [1;34msrc[0;00m/  [1;34mtests[0;00m/  tfile  [1;32mz1[0;00m  [1;32mz2[0;00m  
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ./bin/ls
+[1;32ma.out[0;00m  [1;34mbin[0;00m/  hw3tb  LICENSE  Makefile  p.cpp  README.md  signals.script  [1;34msrc[0;00m/  [1;34mtests[0;00m/  tfile  [1;32mz1[0;00m  [1;32mz2[0;00m  
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ bin/ls
+[1;32ma.out[0;00m  [1;34mbin[0;00m/  hw3tb  LICENSE  Makefile  p.cpp  README.md  signals.script  [1;34msrc[0;00m/  [1;34mtests[0;00m/  tfile  [1;32mz1[0;00m  [1;32mz2[0;00m  
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ./ls
+a.out  bin  hw3tb  LICENSE  Makefile  p.cpp  README.md	signals.script	src  tests  tfile  z1  z2
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ 
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ #testing cd
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd #cd with no parameters, error prompted
+Error: no parameters. Directory not changed.
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd .#cd with single parameter, same directory
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd tests#cd with single param, switch directory
+~/home/csmajs/tzick002/Documents/rshell/tests
+tzick002@hammer $ ls
+a  cp_autotest.sh  exec.script	ls.script  piping.script  zz
+~/home/csmajs/tzick002/Documents/rshell/tests
+tzick002@hammer $ cd ..#back to old directory
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd tests src hocus pocus #cd with multiple params, only first will be executed
+~/home/csmajs/tzick002/Documents/rshell/tests
+tzick002@hammer $ cd ..
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd ./tests
+~/home/csmajs/tzick002/Documents/rshell/tests
+tzick002@hammer $ cd ..
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd idontexist#cd on non existant directory
+Chdir Error: No such file or directory
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd file#cd on a file instead of directory
+Chdir Error: No such file or directory
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd bin
+~/home/csmajs/tzick002/Documents/rshell/bin
+tzick002@hammer $ ./ls #run command from local directory
+cp  ls	rshell
+~/home/csmajs/tzick002/Documents/rshell/bin
+tzick002@hammer $ ./ls -al #run command from local with flags
+total 696
+drwx------ 2 tzick002 csmajs   4096 Mar  8 15:01 .
+drwx------ 6 tzick002 csmajs   4096 Mar  8 15:02 ..
+-rwx------ 1 tzick002 csmajs  33340 Mar  8 15:01 cp
+-rwx------ 1 tzick002 csmajs 205487 Mar  8 15:01 ls
+-rwx------ 1 tzick002 csmajs 450238 Mar  8 15:01 rshell
+~/home/csmajs/tzick002/Documents/rshell/bin
+tzick002@hammer $ cd .. #go back
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ mkdir zz
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd zz
+~/home/csmajs/tzick002/Documents/rshell/zz
+tzick002@hammer $ mkdir z
+~/home/csmajs/tzick002/Documents/rshell/zz
+tzick002@hammer $ cd ..
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cd zz/z	#testing cd on nested folders
+~/home/csmajs/tzick002/Documents/rshell/zz/z
+tzick002@hammer $ ls
+~/home/csmajs/tzick002/Documents/rshell/zz/z
+tzick002@hammer $ cd .. && cd ..
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ 
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ #begin testing control C
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ 
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ^C
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ls
+a.out  bin  hw3tb  LICENSE  Makefile  p.cpp  README.md signals.script src  tests  tfile  z.script
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ^C
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ echo test
+test
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ cat
+we're in the foregound
+we're in the foregound
+end with ctrl c ^C~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ^C
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ #testing Extra Credit ctrl z with bg and fg
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ bg #bg and fg with no other processes
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ fg
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ls
+a.out  bin  hw3tb  LICENSE  Makefile  p.cpp  README.md signals.script src  tests  tfile  z.script
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ^Z
+[1]+  Stopped                 bin/rshell
+~/Documents/rshell
+tzick002@hammer $ fg
+bin/rshell
+  Process Stopped
+ls
+a.out  bin  hw3tb  LICENSE  Makefile  p.cpp  README.md signals.script src  tests  tfile  z.script
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ ^Z
+[1]+  Stopped                 bin/rshell
+~/Documents/rshell
+tzick002@hammer $ fg
+bin/rshell
+  Process Stopped
+pwd
+/home/csmajs/tzick002/Documents/rshell
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ #done with testing
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ 
+~/home/csmajs/tzick002/Documents/rshell
+tzick002@hammer $ exit
+
+================================================================================
+[s%%%%%%%%%%[u[0;32mtzick002[0;36m@[0;32mcs100[0;36m:[0;32m~/Documents/rshell[0;95m (signals) [0;36m$[0m exit
+exit
+~/Documents/rshell
+tzick002@hammer $ exit
+exit
+
+Script done on Sun 08 Mar 2015 03:07:53 PM PDT
