@@ -25,18 +25,23 @@
 #define num0outlist O_RDONLY|O_TRUNC
 
 using namespace std;
-int killpid = 0;
+
 int mainpid;
+int curpid = 0;
 void handler(int i){
 	if(i == SIGINT){
+		int temp = getpid();
+		if(-1 == temp){
+			perror("getpid");
+			exit(1);
+		}
+		if(temp == 0)
+			exit(0);
 		return;
 	}
 	if(i == SIGTSTP){
-		if(killpid != mainpid){
-			kill(killpid, SIGTSTP);
-			cout << endl << "Process Stopped" << endl;
-			kill(mainpid, SIGCONT);
-		}
+		raise(SIGSTOP);
+		cout << "  Process Stopped" << endl;
 	}
 }
 
@@ -178,7 +183,7 @@ int execredir(string left, string right, int dupval, int ID){
 	}
 
 	int pid = fork();
-	killpid = pid;
+	curpid = pid;
 	if(pid == -1){
 		perror("Error with fork()");
 		exit(1);
@@ -208,7 +213,7 @@ int execredir(string left, string right, int dupval, int ID){
 		deletevec(charvec);
 		return var;
 	}
-		deletevec(charvec);
+	deletevec(charvec);
 	return -1;
 }
 
@@ -265,7 +270,7 @@ int execredir2(string left, string middle, string right, int dupval){
 	}
 
 	int pid = fork();
-	killpid = pid;
+	curpid = pid;
 	if(pid == -1){
 		perror("Error with fork()");
 		exit(1);
@@ -538,27 +543,30 @@ int execute(string commands){
 				return changeDir(getready.at(1));
 		}
 		else if(getready.at(0) == "fg"){
-			if(killpid != mainpid){
-				if(-1 == kill(killpid, SIGCONT)){
+			if(curpid != 0){
+				if(-1 == kill(mainpid, SIGCONT)){
 					perror("Kill Error");
 					return -1;
 				}
 				return 0;
 			}
-			cout << "fg: current: no such job" << endl;
-			return -1;
+			else{
+				cout << "No fg process" << endl;
+				return -1;
+			}
 		}
 		else if(getready.at(0) == "bg"){
-			if(killpid != mainpid){
-				if(-1 == kill(killpid, SIGCONT)){
+			if(curpid != 0){
+				if(-1 == kill(mainpid, SIGCONT)){
 					perror("Kill Error");
 					return -1;
 				}
-				killpid = 0;
 				return 0;
 			}
-			cout << "bg: current: no such job" << endl;
-			return -1;
+			else{
+				cout << "No bg process" << endl;
+				return -1;
+			}
 		}
 	}
 	/*for(unsigned i = 0; i < getready.size(); ++i){
@@ -580,7 +588,7 @@ int execute(string commands){
 		argchar[i] = charvec.at(i);
 	}
 	int pid = fork();
-	killpid = pid;
+	curpid = pid;
 	if(pid == -1){
 		perror("Error with fork()");
 		exit(1);
@@ -682,7 +690,6 @@ string specialspacing(string fixer){
 }
 
 int main(){
-	mainpid = getpid();
 	if(SIG_ERR == signal(SIGINT, handler)){
 		perror("Signal Error");
 		exit(1);
@@ -706,9 +713,9 @@ int main(){
 	string curhost = charhost;	
 	if(curhost.find('.') != std::string::npos)
 		curhost.resize(curhost.find('.'));
-
 	while(true){
 		//output prompt and take in command line
+		mainpid = getpid();
 		char cwd[BUFSIZ];
 		if(getcwd(cwd, sizeof(cwd)) == NULL){
 			perror("Getcwd Error");
@@ -754,7 +761,6 @@ int main(){
 					//if last was ; (or a brand new command)
 					if(lastcmd == 0){
 						conditional = execute(execme);
-						//killpid = 0;
 						if(conditional == 0)
 							passed = true;
 						else
@@ -764,7 +770,6 @@ int main(){
 					else if(lastcmd == 1){
 						if(passed){
 							conditional = execute(execme);
-							//killpid = 0;
 							if(conditional == 0)
 								passed = true;
 							else
@@ -775,7 +780,6 @@ int main(){
 					else if(lastcmd == 2){
 						if(!passed){
 							conditional = execute(execme);
-							//killpid = 0;
 							if(conditional == 0)
 								passed = true;
 							else
